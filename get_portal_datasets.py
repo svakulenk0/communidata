@@ -13,7 +13,7 @@ Collect metadata of the portal datasets
 
 import requests
 import pickle
-# from generate_wordcloud import generate_wordcloud
+
 
 PORTAL_WATCH_API = 'http://data.wu.ac.at/portalwatch/api/v1/portal/'
 
@@ -35,7 +35,7 @@ def get_descriptions_of_all_portal_datasets(portal_id, snapshot='1643'):
     descriptions_dump = 'datasets/%s_%s_titles.txt' % (portal_id, snapshot)
     with open(descriptions_dump, 'w') as outfile:
         print len(datasets), 'datasets in', portal_id, 'portal'
-        for dataset in datasets[:2]:
+        for dataset in datasets:
             dataset_id = dataset['id']
             meta_api = PORTAL_WATCH_API+'/'.join([portal_id, snapshot, 'dataset', dataset_id])
             response = requests.get(meta_api).json()
@@ -69,7 +69,6 @@ def test_get_descriptions_of_all_portal_datasets():
     # portal_id = 'www_opendataportal_at'
     descriptions = get_descriptions_of_all_portal_datasets(portal_id)
     assert descriptions
-    # generate_wordcloud(' '.join(descriptions))
 
 
 if __name__ == '__main__':
