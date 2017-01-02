@@ -32,18 +32,35 @@ def get_descriptions_of_all_portal_datasets(portal_id, snapshot='1643'):
             pickle.dump(datasets, outfile)
     # Using "id", get the metadata for a dataset, e.g. http://data.wu.ac.at/portalwatch/api/v1/portal/www_opendataportal_at/1643/dataset/c4feea62-92d8-4855-a2b5-98338a0ffe41
     descriptions = []
-    for dataset in datasets[:2]:
-        dataset_id = dataset['id']
-        meta_api = PORTAL_WATCH_API+'/'.join([portal_id, snapshot, 'dataset', dataset_id])
-        response = requests.get(meta_api)
-        meta = response.json()[0]['raw']
-        # title = meta['title']
-        description = meta['notes']
-        descriptions.append(description)
+    descriptions_dump = 'datasets/%s_%s_titles.txt' % (portal_id, snapshot)
+    with open(descriptions_dump, 'w') as outfile:
+        print len(datasets), 'datasets in', portal_id, 'portal'
+        for dataset in datasets[:2]:
+            dataset_id = dataset['id']
+            meta_api = PORTAL_WATCH_API+'/'.join([portal_id, snapshot, 'dataset', dataset_id])
+            response = requests.get(meta_api).json()
+            try:
+                meta = response[0]['raw']
+                description = meta['title']
+                outfile.write(description.encode('utf-8')+'\n')
+                # description = meta['notes']
+                descriptions.append(description)
+            except:
+                print response
     return descriptions
 
     # All available snapshots (yyww), e.g. http://data.wu.ac.at/portalwatch/api/v1/portal/www_opendataportal_at/snapshots
     # SNAPSHOTS_API = ''
+
+
+# def dump_descriptions():
+#     # portal_id = 'www_opendataportal_at'
+#     portal_id = 'data_gv_at'
+#     descriptions_dump = 'datasets/%s_titles.txt' % portal_id
+#     descriptions = get_descriptions_of_all_portal_datasets(portal_id)
+#     print descriptions
+#     with open(descriptions_dump, 'w') as outfile:
+#         outfile.writelines("%s\n" % l for l in descriptions)
 
 
 def test_get_descriptions_of_all_portal_datasets():
@@ -51,9 +68,10 @@ def test_get_descriptions_of_all_portal_datasets():
     portal_id = 'data_gv_at'
     # portal_id = 'www_opendataportal_at'
     descriptions = get_descriptions_of_all_portal_datasets(portal_id)
-    print descriptions
+    assert descriptions
     # generate_wordcloud(' '.join(descriptions))
 
 
 if __name__ == '__main__':
     test_get_descriptions_of_all_portal_datasets()
+    # dump_descriptions()
