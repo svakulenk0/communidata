@@ -1,2 +1,2 @@
 # CommuniData project
-Open Data for Local Communities
+Public repository of the research project CommuniData: Open Data for Local Communities http://www.communidata.at
