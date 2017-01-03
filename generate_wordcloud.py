@@ -12,13 +12,16 @@ Wordcloud generator adopted from https://github.com/amueller/word_cloud/blob/mas
 '''
 
 from os import path
+# import wordcloud
+# from wordcloud import wordcloud
 
 from wordcloud import WordCloud
 
+# d = path.dirname(__file__)
 
 def generate_wordcloud(text):
     # Generate a word cloud image
-    wordcloud = WordCloud().generate(text)
+    wordcloud = WordCloud(max_font_size=40, max_words=2000, width=600, height=400).generate(text)
 
     # Display the generated image:
     # the matplotlib way:
@@ -37,12 +40,14 @@ def generate_wordcloud(text):
     #image = wordcloud.to_image()
     #image.show()
 
-
 def test_generate_wordcloud():
     # descriptions_dump = 'datasets/%s_%s_titles.txt' % (portal_id, snapshot)
     descriptions_dump = 'datasets/data_gv_at_titles.txt'
     # Read the whole text.
-    text = open(descriptions_dump).read()
+    text = open(descriptions_dump).read().decode('utf-8')
+    # import unicodedata
+    # text = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore')
+    # print text
     generate_wordcloud(text)
 
 
