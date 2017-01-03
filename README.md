@@ -22,3 +22,9 @@ This project is licensed under the MIT License
 
 * Austrian Research Promotion Agency (FFG)
 * Sebastian Neumaier: Open Data Portal Watch API http://data.wu.ac.at/portalwatch/
+
+## Related work
+
+* Los Angeles GeoHub
+http://geohub.lacity.org
+https://www.youtube.com/watch?v=iuUShx8hsWQ
