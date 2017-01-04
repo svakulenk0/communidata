@@ -20,8 +20,11 @@ from wordcloud import WordCloud
 # d = path.dirname(__file__)
 
 def generate_wordcloud(text):
+    # load custom stopword list
+    stopwords = set([x.strip() for x in open('stopwords').read().split('\n')])
+    print stopwords
     # Generate a word cloud image
-    wordcloud = WordCloud(max_font_size=40, max_words=2000, width=600, height=400).generate(text)
+    wordcloud = WordCloud(stopwords=stopwords, max_font_size=40, max_words=2000, width=600, height=400).generate(text)
 
     # Display the generated image:
     # the matplotlib way:
@@ -42,12 +45,13 @@ def generate_wordcloud(text):
 
 def test_generate_wordcloud():
     # descriptions_dump = 'datasets/%s_%s_titles.txt' % (portal_id, snapshot)
-    descriptions_dump = 'datasets/data_gv_at_titles.txt'
+    descriptions_dump = 'datasets/data_gv_at_1701_titles.txt'
+    # descriptions_dump = 'datasets/www_opendataportal_at_1701_titles.txt'
     # Read the whole text.
     text = open(descriptions_dump).read().decode('utf-8')
     # import unicodedata
     # text = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore')
-    # print text
+    # print len(text)
     generate_wordcloud(text)
 
 
