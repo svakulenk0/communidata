@@ -8,11 +8,14 @@ Public repository of the research project CommuniData: Open Data for Local Commu
 
 ## Results
 
-* 2219 datasets in data_gv_at portal (snapshot='1643')
-* 2204 titles retrieved
-* Exception: {u'message': u'QueuePool limit of size 20 overflow 10 reached, connection timed out, timeout 30'}
+* titles from all 2297 datasets in data_gv_at portal, 373 datasets in www_opendataportal_at portal (latest snapshot: 1st week of 2017 '1701')
+* Exception from the API: {u'message': u'QueuePool limit of size 20 overflow 10 reached, connection timed out, timeout 30'} after ~150 requests (data_gv_at: 1643 snapshot)
 
-![data.gv.at wordcloud](results/data_gv_at_1643.png)
+#### data.gv.at Wordcloud (2297 datasets as of 31.12.2016)
+![data.gv.at wordcloud](results/data_gv_at_1701.png)
+
+#### opendataportal.at Wordcloud (373 datasets as of 31.12.2016)
+![opendataportal.at wordcloud](results/www_opendataportal_at_1701.png)
 
 ## License
 
