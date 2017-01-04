@@ -18,7 +18,7 @@ import pickle
 PORTAL_WATCH_API = 'http://data.wu.ac.at/portalwatch/api/v1/portal/'
 
 
-def get_descriptions_of_all_portal_datasets(portal_id, snapshot='1643'):
+def get_descriptions_of_all_portal_datasets(portal_id, snapshot='1701'):
     # Get the list of all portal datasets, e.g. http://data.wu.ac.at/portalwatch/api/v1/portal/www_opendataportal_at/1643/datasets
     datasets_dump = 'datasets/'+portal_id+'_'+snapshot+'.json'
     try:
@@ -38,15 +38,20 @@ def get_descriptions_of_all_portal_datasets(portal_id, snapshot='1643'):
         for dataset in datasets:
             dataset_id = dataset['id']
             meta_api = PORTAL_WATCH_API+'/'.join([portal_id, snapshot, 'dataset', dataset_id])
-            response = requests.get(meta_api).json()
-            try:
-                meta = response[0]['raw']
-                description = meta['title']
-                outfile.write(description.encode('utf-8')+'\n')
-                # description = meta['notes']
-                descriptions.append(description)
-            except:
-                print response
+            # make sure we receive all the data from the API
+            success = False
+            while not success:
+                response = requests.get(meta_api).json()
+                try:
+                    meta = response[0]['raw']
+                    description = meta['title']
+                    outfile.write(description.encode('utf-8')+'\n')
+                    # description = meta['notes']
+                    descriptions.append(description)
+                    success = True
+                except:
+                    print response
+    print len(descriptions), 'descriptions retrieved'
     return descriptions
 
     # All available snapshots (yyww), e.g. http://data.wu.ac.at/portalwatch/api/v1/portal/www_opendataportal_at/snapshots
@@ -65,8 +70,8 @@ def get_descriptions_of_all_portal_datasets(portal_id, snapshot='1643'):
 
 def test_get_descriptions_of_all_portal_datasets():
     # data.gv.at
-    portal_id = 'data_gv_at'
-    # portal_id = 'www_opendataportal_at'
+    # portal_id = 'data_gv_at'
+    portal_id = 'www_opendataportal_at'
     descriptions = get_descriptions_of_all_portal_datasets(portal_id)
     assert descriptions
 
