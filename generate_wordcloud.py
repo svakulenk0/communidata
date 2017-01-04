@@ -12,9 +12,6 @@ Wordcloud generator adopted from https://github.com/amueller/word_cloud/blob/mas
 '''
 
 from os import path
-# import wordcloud
-# from wordcloud import wordcloud
-
 from wordcloud import WordCloud
 
 # d = path.dirname(__file__)
@@ -43,10 +40,11 @@ def generate_wordcloud(text):
     #image = wordcloud.to_image()
     #image.show()
 
+
 def test_generate_wordcloud():
     # descriptions_dump = 'datasets/%s_%s_titles.txt' % (portal_id, snapshot)
-    descriptions_dump = 'datasets/data_gv_at_1701_titles.txt'
-    # descriptions_dump = 'datasets/www_opendataportal_at_1701_titles.txt'
+    # descriptions_dump = 'datasets/data_gv_at_1701_titles.txt'
+    descriptions_dump = 'datasets/www_opendataportal_at_1701_titles.txt'
     # Read the whole text.
     text = open(descriptions_dump).read().decode('utf-8')
     # import unicodedata
