@@ -28,6 +28,16 @@ This project is licensed under the MIT License
 
 ## Related work
 
+* ADEQUATe project
+
+https://www.adequate.at
+
 * Los Angeles GeoHub
+
 http://geohub.lacity.org
+
 https://www.youtube.com/watch?v=iuUShx8hsWQ
+
+* Los Angeles Open Data
+
+https://data.lacity.org/A-Livable-and-Sustainable-City/LASAN-Miles-of-Sewer-Cleaned/iyyp-p2fx
