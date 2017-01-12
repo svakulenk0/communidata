@@ -4,6 +4,7 @@ Public repository of the research project CommuniData: Open Data for Local Commu
 ## Prerequisites
 
 * [wordcloud](https://github.com/amueller/word_cloud)
+* matplotlib
 * Pillow
 
 ## Results
@@ -41,3 +42,7 @@ https://www.youtube.com/watch?v=iuUShx8hsWQ
 * Los Angeles Open Data
 
 https://data.lacity.org/A-Livable-and-Sustainable-City/LASAN-Miles-of-Sewer-Cleaned/iyyp-p2fx
+
+* Kaggle
+
+https://www.kaggle.com/datasets
