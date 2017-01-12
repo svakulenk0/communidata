@@ -21,7 +21,7 @@ def generate_wordcloud(text):
     stopwords = set([x.strip() for x in open('stopwords').read().split('\n')])
     print stopwords
     # Generate a word cloud image
-    wordcloud = WordCloud(stopwords=stopwords, max_font_size=40, max_words=2000, width=600, height=400).generate(text)
+    wordcloud = WordCloud(stopwords=stopwords, max_font_size=50, max_words=2000, width=800, height=600, margin=0).generate(text)
 
     # Display the generated image:
     # the matplotlib way:
@@ -29,12 +29,18 @@ def generate_wordcloud(text):
     plt.imshow(wordcloud)
     plt.axis("off")
 
-    # # lower max_font_size
-    # wordcloud = wordcloud.WordCloud(max_font_size=40).generate(text)
-    # plt.figure()
-    # plt.imshow(wordcloud)
-    # plt.axis("off")
-    plt.show()
+    # display the image
+    # plt.show()
+
+    # save image on disk (+ get rid of the margin trick)
+    plt.gca().set_axis_off()
+    plt.subplots_adjust(top = 1, bottom = 0, right = 1, left = 0, 
+                        hspace = 0, wspace = 0)
+    plt.margins(0,0)
+    import matplotlib.ticker as ticker
+    plt.gca().xaxis.set_major_locator(ticker.NullLocator())
+    plt.gca().yaxis.set_major_locator(ticker.NullLocator())
+    plt.savefig('results.png', bbox_inches='tight', pad_inches=0.0)
 
     # The pil way (if you don't have matplotlib)
     #image = wordcloud.to_image()
