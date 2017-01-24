@@ -99,9 +99,10 @@ def download_portal_files(portal_id, snapshot=LATEST_SNAPSHOT, formats=['csv']):
     output_folder='datasets/%s/csvs/' % portal_id
     for url in csv_urls:
         response = requests.get(url)
-        filename = url.replace('/','_')
-        with open(output_folder+filename, 'wb') as f:
-            f.write(response.content)
+        if response.status_code == 200:
+            filename = url.replace('/','_')
+            with open(output_folder+filename, 'wb') as f:
+                f.write(response.content)
 
 
     # return datasets
