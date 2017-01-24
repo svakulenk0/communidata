@@ -16,10 +16,16 @@ import pickle
 
 
 PORTAL_WATCH_API = 'http://data.wu.ac.at/portalwatch/api/v1/portal/'
+LATEST_SNAPSHOT = '1702'  # format: yyww (year/week)
+AT_PORTALS = ['www_opendataportal_at', 'data_gv_at']  # ids of the austrian open data portals
 
 
-def get_descriptions_of_all_portal_datasets(portal_id, snapshot='1701'):
-    # Get the list of all portal datasets, e.g. http://data.wu.ac.at/portalwatch/api/v1/portal/www_opendataportal_at/1643/datasets
+def get_descriptions_of_all_portal_datasets(portal_id, snapshot=LATEST_SNAPSHOT):
+    '''
+    Get description metadata for all datasets for a given portal 
+    '''
+    # Get the list of all portal datasets 
+    # e.g. http://data.wu.ac.at/portalwatch/api/v1/portal/www_opendataportal_at/1643/datasets
     datasets_dump = 'datasets/'+portal_id+'_'+snapshot+'.json'
     try:
         with open(datasets_dump, 'r') as infile:
@@ -30,14 +36,15 @@ def get_descriptions_of_all_portal_datasets(portal_id, snapshot='1701'):
         datasets = response.json()
         with open(datasets_dump, 'w') as outfile:
             pickle.dump(datasets, outfile)
-    # Using "id", get the metadata for a dataset, e.g. http://data.wu.ac.at/portalwatch/api/v1/portal/www_opendataportal_at/1643/dataset/c4feea62-92d8-4855-a2b5-98338a0ffe41
+    # Using "id", get the metadata for a dataset
+    # e.g. http://data.wu.ac.at/portalwatch/api/v1/portal/www_opendataportal_at/1643/dataset/c4feea62-92d8-4855-a2b5-98338a0ffe41
     descriptions = []
     descriptions_dump = 'datasets/%s_%s_titles.txt' % (portal_id, snapshot)
     with open(descriptions_dump, 'w') as outfile:
         print len(datasets), 'datasets in', portal_id, 'portal'
         for dataset in datasets:
             dataset_id = dataset['id']
-            meta_api = PORTAL_WATCH_API+'/'.join([portal_id, snapshot, 'dataset', dataset_id])
+            meta_api = PORTAL_WATCH_API + '/'.join([portal_id, snapshot, 'dataset', dataset_id])
             # make sure we receive all the data from the API
             success = False
             while not success:
@@ -69,13 +76,44 @@ def get_descriptions_of_all_portal_datasets(portal_id, snapshot='1701'):
 
 
 def test_get_descriptions_of_all_portal_datasets():
-    # data.gv.at
-    # portal_id = 'data_gv_at'
-    portal_id = 'www_opendataportal_at'
-    descriptions = get_descriptions_of_all_portal_datasets(portal_id)
-    assert descriptions
+    '''
+    Test get description metadata for all datasets for a given portal 
+    '''
+    portal_ids = AT_PORTALS
+    for portal_id in portal_ids:
+        descriptions = get_descriptions_of_all_portal_datasets(portal_id)
+        assert descriptions
+
+
+def download_portal_files(portal_id, snapshot=LATEST_SNAPSHOT, formats=['csv']):
+    '''
+    Download all datasets from a given portal
+    * formats <list> - download only the files with the specified extensions
+    '''
+    api_call = PORTAL_WATCH_API + '%s/%s/resources'  % (portal_id, snapshot)
+    response = requests.get(api_call)
+    file_urls = response.json()
+    print len(file_urls), 'files found'
+    csv_urls = [url for url in file_urls if url[-3:]=='csv']
+    print len(csv_urls), 'csvs found'
+    output_folder='datasets/%s/csvs/' % portal_id
+    for url in csv_urls:
+        response = requests.get(url)
+        filename = url.replace('/','_')
+        with open(output_folder+filename, 'wb') as f:
+            f.write(response.content)
+
+
+    # return datasets
+
+
+def test_download_portal_files():
+    '''
+    Test download all datasets from a given portal 
+    '''
+    portal_id = AT_PORTALS[1]
+    download_portal_files(portal_id)
 
 
 if __name__ == '__main__':
-    test_get_descriptions_of_all_portal_datasets()
-    # dump_descriptions()
+    test_download_portal_files()
