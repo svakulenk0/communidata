@@ -10,7 +10,7 @@ Created on Jan 2, 2017
 Collect metadata of the portal datasets
 
 '''
-
+import os
 import requests
 import pickle
 
@@ -90,30 +90,34 @@ def download_portal_files(portal_id, snapshot=LATEST_SNAPSHOT, formats=['csv']):
     Download all datasets from a given portal
     * formats <list> - download only the files with the specified extensions
     '''
+    print portal_id, "data loading.."
     api_call = PORTAL_WATCH_API + '%s/%s/resources'  % (portal_id, snapshot)
     response = requests.get(api_call)
     file_urls = response.json()
     print len(file_urls), 'files found'
     csv_urls = [url for url in file_urls if url[-3:]=='csv']
     print len(csv_urls), 'csvs found'
-    output_folder='datasets/%s/csvs/' % portal_id
+    output_folder = 'datasets/%s/csvs/' % portal_id
+    # make sure the folder exists
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
     for url in csv_urls:
         response = requests.get(url)
         if response.status_code == 200:
             filename = url.replace('/','_')
+            # print filename
+            # print response.headers['content-type']
             with open(output_folder+filename, 'wb') as f:
                 f.write(response.content)
-
-
-    # return datasets
 
 
 def test_download_portal_files():
     '''
     Test download all datasets from a given portal 
     '''
-    portal_id = AT_PORTALS[1]
-    download_portal_files(portal_id)
+    portal_ids = AT_PORTALS
+    for portal_id in portal_ids:
+        download_portal_files(portal_id)
 
 
 if __name__ == '__main__':
