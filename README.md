@@ -40,54 +40,49 @@ This project is licensed under the MIT License
 ## Acknowledgments
 
 * Austrian Research Promotion Agency (FFG)
-* Sebastian Neumaier: Open Data Portal Watch API http://data.wu.ac.at/portalwatch/
+* Sebastian Neumaier: [Open Data Portal Watch API](http://data.wu.ac.at/portalwatch/)
 
 ## References
 
 ### Open Data projects
 
-* ADEQUATe project
+* [ADEQUATe](https://www.adequate.at)
 
-https://www.adequate.at
+* Los Angeles City
 
-* Los Angeles GeoHub
+** [Open Data portal](https://data.lacity.org/A-Livable-and-Sustainable-City/LASAN-Miles-of-Sewer-Cleaned/iyyp-p2fx)
 
-http://geohub.lacity.org
+** [GeoHub platform](http://geohub.lacity.org) + [Video](https://www.youtube.com/watch?v=iuUShx8hsWQ)
 
-https://www.youtube.com/watch?v=iuUShx8hsWQ
+* [Durham Open Data](https://opendurham.nc.gov/page/reuse/) (OpenDataSoft)
 
-* Los Angeles Open Data
+* [Harvard Open Data](http://harvard-open-data-project.github.io)
 
-https://data.lacity.org/A-Livable-and-Sustainable-City/LASAN-Miles-of-Sewer-Cleaned/iyyp-p2fx
-
-* Harvard Open Data Project
-
-http://harvard-open-data-project.github.io
-
-* Kaggle
-
-https://www.kaggle.com/datasets
+* [Kaggle](https://www.kaggle.com/datasets)
 
 ### Jupyter Notebooks
 
-* tmpnb
+* [tmpnb](https://github.com/jupyter/tmpnb)
 
-Sample server: http://jupyter.cloudet.xyz/user/IkdqW98Ie37B/notebooks/index.ipynb
+... launches a docker container for each user that requests one.
 
-* JupyterHub Server
+... deploying via nginx.
 
-https://github.com/jupyterhub/jupyterhub
+* [JupyterHub Server](https://github.com/jupyterhub/jupyterhub)
 
-* Dynamic Dashboards
+[Deploying JupyterHub for Education](https://developer.rackspace.com/blog/deploying-jupyterhub-for-education/)
 
-* ipywidgets package
+* [Declarative Widgets](https://github.com/jupyter/declarativewidgets) and [Dynamic Dashboards](https://github.com/jupyter/dashboards)
+
+** [Tutorials](http://jupyter.cloudet.xyz)
+
+** Health Inspection Dashboard Tutorial: [[Video]](https://www.youtube.com/watch?v=V3VxQGevHCU) [[Code]](https://github.com/jupyter-resources/tutorial-dashboards-declarativewidgets)
+
+* [ipywidgets](https://github.com/ipython/ipywidgets)
+
 
 * Plotly
 
 * PivotTable.js
 
-* Declarative Widgets
-
-* Lightning Server API
-
-http://lightning-viz.org
+* [Lightning Server API](http://lightning-viz.org)
