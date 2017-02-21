@@ -1,0 +1,97 @@
+<!--
+# Copyright (c) Jupyter Development Team.
+# Distributed under the terms of the Modified BSD License.
+-->
+<link rel="import" href="urth-viz-chart-common-behavior.html">
+
+<link rel="import" href="../paper-menu/paper-menu.html">
+<link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
+
+<!--
+Base widget that draws a chart using NVD3, which supports several chart types.
+
+The chart accepts data via attribute `datarows` and column headers via attribute `columns`:
+
+1. `datarows` should be of type Array of Arrays, representing list of rows.
+
+2. `columns` should also be of type Array of strings, representing column headers.
+
+@group Urth Viz
+@element urth-viz-chart
+-->
+<dom-module id="urth-viz-chart">
+    <link rel="import" type="css" href="../nvd3/build/nv.d3.css">
+    <link rel="import" type="css" href="urth-viz-chart.css">
+
+    <template>
+        <link rel="stylesheet" type="text/css" href="../nvd3/build/nv.d3.css">
+        <link rel="stylesheet" type="text/css" href="urth-viz-chart.css">
+
+        <div id="settings-section">
+          <paper-dropdown-menu label="Category" noink no-animations>
+            <paper-menu class="dropdown-content" selected="{{primary}}">
+              <template is="dom-repeat" items="[[columns]]" as="column">
+                <paper-item>[[column]]</paper-item>
+              </template>
+            </paper-menu>
+          </paper-dropdown-menu>
+          <paper-dropdown-menu label="Value" noink no-animations>
+            <paper-menu class="dropdown-content" selected="{{secondary}}">
+              <template is="dom-repeat" items="[[columns]]" as="column">
+                <paper-item>[[column]]</paper-item>
+              </template>
+            </paper-menu>
+          </paper-dropdown-menu>
+        </div>
+        <div id="chart1">
+            <svg style='height:500px'></svg>
+        </div>
+        <content id="content" select="urth-viz-col"></content>
+    </template>
+
+    <script>
+    'use strict';
+
+    window.Urth = window.Urth || {};
+
+    Polymer({
+        is: 'urth-viz-chart',
+
+        properties: {
+            /**
+             * The type of chart (e.g. bar, pie).
+             */
+            type: {
+                type: String,
+                notify: true,
+                observer: '_typeChanged'
+            }
+        },
+
+        behaviors: [
+            Urth.VizChartCommonBehavior
+        ],
+
+        created: function() {
+            // Set up old event name for back-compat
+            this.addEventListener('urth-viz-render', function() {
+                this.fire('urth-viz-chart-render');
+            }.bind(this));
+        },
+
+        _typeChanged: function(newValue, oldValue) {
+            // temporary: enable settings for pie chart only
+            this.$['settings-section'].style.display = this.type == 'pie' ? 'block' : 'none';
+
+            if (oldValue) {
+                require(['d3'], function(d3) {
+                    this._svgSelection(d3).selectAll('*').remove();
+                    this._createChart();
+                }.bind(this));
+            }
+        }
+    });
+
+    </script>
+</dom-module>
