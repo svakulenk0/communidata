@@ -82,9 +82,11 @@ data.columns = [&#34;District&#34;, &#34;Dog_Breed&#34;, &#34;Dog_Count&#34;]
 # Check the top of the table to make sure the dataset is loaded correctly 
 data.head()
 </pre></div><div class="report-cell rendered_html  "><h2 id="Show-the-Data">Show the Data<a class="anchor-link" href="#Show-the-Data">&#182;</a></h2><h3 id="Interactive-Table">Interactive Table<a class="anchor-link" href="#Interactive-Table">&#182;</a></h3></div><div class="report-cell   "><pre data-executable="true">
-# Load library for the interactive visualizations
+# Load the library for interactive visualization
 import declarativewidgets
 declarativewidgets.init()
+import warnings
+warnings.simplefilter(&#39;ignore&#39;)
 </pre></div><div class="report-cell rendered_html  "><p>Import widgets</p>
 </div><div class="report-cell   "><pre data-executable="true">
 %%html
