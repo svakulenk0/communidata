@@ -15,10 +15,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <template>
     <button id="trigger" on-click="toggle">Open</button>
-    <test-overlay id="overlay">
-      Composed overlay
-      <button>button 1</button>
-      <button>button 2</button>
+    <test-overlay id="dropdown">
+      <content></content>
     </test-overlay>
   </template>
 
@@ -30,7 +28,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   Polymer({
     is: 'test-menu-button',
     toggle: function() {
-      this.$.overlay.toggle();
+      this.$.dropdown.toggle();
     }
   });
 })();

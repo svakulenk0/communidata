@@ -19,12 +19,16 @@
         })();
         Urth.tmpnb_mode = false;
 
-        Urth.kernel_name = 'conda-env-py3-py' || 'python3';
-        Urth.layout = "report";
+        Urth.kernel_name = 'python3' || 'python3';
+        Urth.maxColumns = 12;
+            Urth.cellMargin = 10;
+            Urth.defaultCellHeight = 20;Urth.layout = "grid";
     </script>
     <script data-main="./static/main.js" src="./static/bower_components/requirejs/require.js"></script>
 
     <link rel="stylesheet" type="text/css" href="./static/bower_components/jquery-ui/themes/smoothness/jquery-ui.min.css">
+    <link rel="stylesheet" type="text/css" href="./static/bower_components/gridstack/dist/gridstack.min.css">
+    <link rel="stylesheet" type="text/css" href="./static/dashboard-common/gridstack-overrides.css">
     <link rel="stylesheet" type="text/css" href="./static/ipython/style.min.css">
     <link rel="stylesheet" type="text/css" href="./static/dashboard-common/dashboard-common.css">
     <link rel="stylesheet" type="text/css" href="./static/urth/dashboard.css">
@@ -40,17 +44,19 @@
 </noscript>
 
 <div id="outer-dashboard" class="container" style="visibility: hidden;">
-    <div id="dashboard-container" class="container" data-dashboard-layout="report"><div class="report-cell rendered_html  "><h1 id="Wiener-dog-in-Vienna:-Open-Data-Dashboard-Tutorial">Wiener dog in Vienna: Open Data Dashboard Tutorial<a class="anchor-link" href="#Wiener-dog-in-Vienna:-Open-Data-Dashboard-Tutorial">&#182;</a></h1><p>This is a sample script showing how an open data datasets can be analysed and demonstrated using <a href="http://jupyter.org">Jupiter Notebooks</a> and <a href="https://github.com/jupyter/declarativewidgets">Declarative Widgets</a>. We take the dog statistics data in Vienna as a sample use case to demonstrate common approaches to analyse open data. Similar examples can be found on <a href="http://jupyter.cloudet.xyz">http://jupyter.cloudet.xyz</a>.</p>
-</div><div class="report-cell rendered_html  "><h2 id="Open-Data-Story">Open Data Story<a class="anchor-link" href="#Open-Data-Story">&#182;</a></h2><p>It is useful to define a set of possible research questions that define the goal of the data study and refine them along the way since the availablity of data suggests possible ways to combine and explore it.</p>
+    <div id="dashboard-container" class="container" data-dashboard-layout="grid"><div data-gs-x=0 data-gs-y=0
+                        data-gs-width=12 data-gs-height=5
+                        class="grid-stack-item rendered_html"><h1 id="Wiener-dog-in-Vienna:-Open-Data-Dashboard-Tutorial">Wiener dog in Vienna: Open Data Dashboard Tutorial<a class="anchor-link" href="#Wiener-dog-in-Vienna:-Open-Data-Dashboard-Tutorial">&#182;</a></h1><p>This is a sample script showing how an open data datasets can be analysed and demonstrated using <a href="http://jupyter.org">Jupiter Notebooks</a> and <a href="https://github.com/jupyter/declarativewidgets">Declarative Widgets</a>. We take the dog statistics data in Vienna as a sample use case to demonstrate common approaches to analyse open data. Similar examples can be found on <a href="http://jupyter.cloudet.xyz">http://jupyter.cloudet.xyz</a>.</p>
+</div><div ><h2 id="Open-Data-Story">Open Data Story<a class="anchor-link" href="#Open-Data-Story">&#182;</a></h2><p>It is useful to define a set of possible research questions that define the goal of the data study and refine them along the way since the availablity of data suggests possible ways to combine and explore it.</p>
 <h3 id="Research-Questions">Research Questions<a class="anchor-link" href="#Research-Questions">&#182;</a></h3><ol>
 <li>Which Vienna districts are most fond of Wiener dogs?</li>
 <li>How many Wiener dogs are there in my district?</li>
 </ol>
 <p>This time we do not only find answers to our questions, but also create a web dashboard with interactive visualization to share our findings with others.</p>
-</div><div class="report-cell rendered_html  "><h2 id="Get-the-Data">Get the Data<a class="anchor-link" href="#Get-the-Data">&#182;</a></h2><p>We described how to load and preprocess the dataset in the <a href="">previous post</a>. It is often not that trivial as it may seem and involves a lot of data wrangling and debugging in order to find and eliminate possible errors or inconsistences in the dataset.</p>
+</div><div ><h2 id="Get-the-Data">Get the Data<a class="anchor-link" href="#Get-the-Data">&#182;</a></h2><p>We described how to load and preprocess the dataset in the <a href="">previous post</a>. It is often not that trivial as it may seem and involves a lot of data wrangling and debugging in order to find and eliminate possible errors or inconsistences in the dataset.</p>
 <p>This step should not be underestimated since it defines the final result of our data analysis.
 Remember: "Garbage in,  garbage out!"</p>
-</div><div class="report-cell   "><pre data-executable="true">
+</div><div ><pre data-executable="true">
 # Load libraries
 import pandas as pd # CSV file processing
 import numpy as np # vector and matrix manipulation
@@ -81,19 +87,18 @@ data.columns = [&#34;District&#34;, &#34;Dog_Breed&#34;, &#34;Dog_Count&#34;]
 
 # Check the top of the table to make sure the dataset is loaded correctly 
 data.head()
-</pre></div><div class="report-cell rendered_html  "><h2 id="Show-the-Data">Show the Data<a class="anchor-link" href="#Show-the-Data">&#182;</a></h2><h3 id="Interactive-Table">Interactive Table<a class="anchor-link" href="#Interactive-Table">&#182;</a></h3></div><div class="report-cell   "><pre data-executable="true">
+</pre></div><div ><h2 id="Show-the-Data">Show the Data<a class="anchor-link" href="#Show-the-Data">&#182;</a></h2><h3 id="Interactive-Table">Interactive Table<a class="anchor-link" href="#Interactive-Table">&#182;</a></h3></div><div ><pre data-executable="true">
 # Load the library for interactive visualization
 import declarativewidgets
-declarativewidgets.init()
 import warnings
 warnings.simplefilter(&#39;ignore&#39;)
-</pre></div><div class="report-cell rendered_html  "><p>Import widgets</p>
-</div><div class="report-cell   "><pre data-executable="true">
+</pre></div><div ><p>Import widgets</p>
+</div><div ><pre data-executable="true">
 %%html
 &lt;link rel=&#34;import&#34; href=&#34;urth_components/urth-viz-table/urth-viz-table.html&#34; is=&#39;urth-core-import&#39;&gt;
 &lt;link rel=&#34;import&#34; href=&#34;urth_components/paper-input/paper-input.html&#34; is=&#39;urth-core-import&#39; package=&#39;PolymerElements/paper-input&#39;&gt;
-</pre></div><div class="report-cell rendered_html  "><p>Write functions to load and process data in the table</p>
-</div><div class="report-cell   "><pre data-executable="true">
+</pre></div><div ><p>Write functions to load and process data in the table</p>
+</div><div ><pre data-executable="true">
 # Match pattern
 def filter_by_pattern(df, pattern):
     &#34;&#34;&#34;Filter a DataFrame so that it only includes rows where the Dog Breed
@@ -108,10 +113,12 @@ def dogs_table(pattern=&#39;&#39;):
     # Use match pattern
     df = data.pipe(filter_by_pattern, pattern)     
     return df
-</pre></div><div class="report-cell   "><pre data-executable="true">
+</pre></div><div data-gs-x=0 data-gs-y=5
+                        data-gs-width=11 data-gs-height=9
+                        class="grid-stack-item "><pre data-executable="true">
 %%html
 &lt;template is=&#34;urth-core-bind&#34;&gt;
-    &lt;paper-input value=&#34;{{pattern}}&#34; label=&#34;Filter by dog breed&#34; &gt;&lt;/paper-input&gt;
+    &lt;paper-input value=&#34;{{pattern}}&#34; label=&#34;Filter by dog breed&#34; &gt;dackel&lt;/paper-input&gt;
 &lt;/template&gt;
 
 &lt;template is=&#34;urth-core-bind&#34;&gt;
@@ -132,7 +139,7 @@ def dogs_table(pattern=&#39;&#39;):
     &lt;/urth-viz-table&gt;
     
 &lt;/template&gt;
-</pre></div><div class="report-cell rendered_html  "><h3 id="Interactive-Bar-Chart">Interactive Bar Chart<a class="anchor-link" href="#Interactive-Bar-Chart">&#182;</a></h3></div><div class="report-cell   "><pre data-executable="true">
+</pre></div><div ><h3 id="Interactive-Bar-Chart">Interactive Bar Chart<a class="anchor-link" href="#Interactive-Bar-Chart">&#182;</a></h3></div><div ><pre data-executable="true">
 # Create Multi-index
 district_stats = data.set_index([&#39;District&#39;, &#39;Dog_Breed&#39;])
 # Calculate percentages
@@ -141,7 +148,7 @@ breed_percents = (district_stats.div(district_stats.sum(axis=0, level=0), level=
 breed_percents = breed_percents.rename(columns = {&#39;Dog_Count&#39;:&#39;Dog_Percent&#39;})
 # Preview
 breed_percents.head()
-</pre></div><div class="report-cell   "><pre data-executable="true">
+</pre></div><div ><pre data-executable="true">
 breed = &#39;Dackel&#39;
 # Filter
 breed_districts = breed_percents[(breed_percents[&#39;Dog_Breed&#39;] == breed)]
@@ -152,8 +159,8 @@ breed_districts = breed_districts.sort_values(ascending=False, by=&#39;Dog_Perce
 # Rename column
 breed_districts = breed_districts.rename(columns = {&#39;Dog_Percent&#39;:&#39;Percent_of_&#39; + breed})
 breed_districts.head()
-</pre></div><div class="report-cell rendered_html  "><p>Create function to load percents per district given the breed</p>
-</div><div class="report-cell   "><pre data-executable="true">
+</pre></div><div ><p>Create function to load percents per district given the breed</p>
+</div><div ><pre data-executable="true">
 # Filter data
 def dogs_bar_chart(breed=&#39;Dackel&#39;):
     &#34;&#34;&#34;Build a DataFrame.   
@@ -169,11 +176,13 @@ def dogs_bar_chart(breed=&#39;Dackel&#39;):
     # Rename column
     df = df.rename(columns = {&#39;Dog_Percent&#39;:&#39;Percent_of_&#39; + breed})  
     return df
-</pre></div><div class="report-cell rendered_html  "><p>Import bar chart widget</p>
-</div><div class="report-cell   "><pre data-executable="true">
+</pre></div><div ><p>Import bar chart widget</p>
+</div><div ><pre data-executable="true">
 %%html
 &lt;link rel=&#34;import&#34; href=&#34;urth_components/urth-viz-bar/urth-viz-bar.html&#34; is=&#39;urth-core-import&#39;&gt;
-</pre></div><div class="report-cell   "><pre data-executable="true">
+</pre></div><div data-gs-x=0 data-gs-y=14
+                        data-gs-width=11 data-gs-height=16
+                        class="grid-stack-item "><pre data-executable="true">
 %%html
 &lt;template is=&#34;urth-core-bind&#34;&gt;
     &lt;urth-core-function ref=&#34;dogs_bar_chart&#34;  
@@ -185,7 +194,7 @@ def dogs_bar_chart(breed=&#39;Dackel&#39;):
     &lt;/urth-core-function&gt;
     &lt;urth-viz-bar xlabel=&#34;Bezirk&#34; ylabel=&#34;% to the total number of dogs in the district&#34; datarows=&#34;{{df.data}}&#34; columns=&#34;{{df.columns}}&#34;&gt;&lt;/urth-viz-bar&gt;
 &lt;/template&gt;
-</pre></div><div class="report-cell rendered_html  "><h2 id="Lessons-Learned">Lessons Learned<a class="anchor-link" href="#Lessons-Learned">&#182;</a></h2><h3 id="Dogs-in-Vienna">Dogs in Vienna<a class="anchor-link" href="#Dogs-in-Vienna">&#182;</a></h3><p>Based on the data available we were able to provide comprehensive answers to the set of research questions proposed in the introduction.</p>
+</pre></div><div ><h2 id="Lessons-Learned">Lessons Learned<a class="anchor-link" href="#Lessons-Learned">&#182;</a></h2><h3 id="Dogs-in-Vienna">Dogs in Vienna<a class="anchor-link" href="#Dogs-in-Vienna">&#182;</a></h3><p>Based on the data available we were able to provide comprehensive answers to the set of research questions proposed in the introduction.</p>
 <ol>
 <li>The true fans of Wiener dogs live in the 4th district of Vienna.</li>
 <li>Wiener dogs are underreprestented in Leoplodstadt (2nd district). They constitute only 2% of the dog population.</li>

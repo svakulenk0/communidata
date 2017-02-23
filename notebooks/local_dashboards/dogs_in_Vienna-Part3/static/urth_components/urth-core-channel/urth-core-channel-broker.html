@@ -135,8 +135,8 @@ var broker = window.Urth['urth-core-channel-broker'].getChannelBroker();
              * @method onKernelReady
              */
             onKernelReady: function() {
-                this._debug('urth-core-channel-broker onKernelReady, creating model...');
-                this.createModel('declarativewidgets.Channels', 10);
+                console.debug('urth-core-channel-broker onKernelReady, creating model...');
+                this.createModel('urth.widgets.widget_channels.Channels', 10);
             },
 
             /**
@@ -147,13 +147,13 @@ var broker = window.Urth['urth-core-channel-broker'].getChannelBroker();
              * @param {Object} options
              */
             onModelChange: function(options) {
-                this._debug('urth-core-channel-broker onModelChange', options);
+                console.debug('urth-core-channel-broker onModelChange', options);
 
                 var changes = options.changed;
                 Object.keys(changes).filter(function(change){
                     return this._validPath(change);
                 }.bind(this)).forEach(function(change){
-                    this._debug('urth-core-channel-broker onModelChange changed ', change, changes[change]);
+                    console.debug('urth-core-channel-broker onModelChange changed ', change, changes[change]);
                     /**
                      * Handle an item change represented by the given path and value.
                      * The path is of the form <CHANNEL_NAME>:<ITEM_NAME>, e.g. "c:user".
@@ -164,7 +164,7 @@ var broker = window.Urth['urth-core-channel-broker'].getChannelBroker();
             },
 
             onModelReady: function() {
-                this._debug('urth-core-channel-broker onModelReady');
+                console.debug('urth-core-channel-broker onModelReady');
             },
 
             /**
@@ -229,12 +229,6 @@ var broker = window.Urth['urth-core-channel-broker'].getChannelBroker();
                 var globalChannel = this._getGlobalChannel(channelName);
                 if (globalChannel) {
                     var data = Polymer.Base.get(globalChannel.name, this);
-                    var filterVariablesToStore = function(channelItem) {
-                        return !channelItem.noStore;
-                    }
-                    globalChannel.elements.forEach(function(channel) {
-                        data = channel.filterChannelItems(data, filterVariablesToStore);
-                    });
                     if (data) {
                         this.$.storage.set(globalChannel.name, data);
                     } else {
@@ -336,7 +330,7 @@ var broker = window.Urth['urth-core-channel-broker'].getChannelBroker();
                     _globalChannels[channelName] = initChannel(channelName);
                     Polymer.Base.set(channelName, {}, this);
                     this.reload(channelName);
-                    this._debug('urth-core-channel-broker _createGlobalChannel: ' +
+                    console.debug('urth-core-channel-broker _createGlobalChannel: ' +
                         'created new channel', channelName, '.'
                     );
                 }
@@ -349,7 +343,7 @@ var broker = window.Urth['urth-core-channel-broker'].getChannelBroker();
                 if (_globalChannels[channelName]) {
                     return _globalChannels[channelName];
                 } else {
-                    this._warn('urth-core-channel-broker _getGlobalChannel: ' +
+                    console.warn('urth-core-channel-broker _getGlobalChannel: ' +
                         'channel', channelName, 'does not exist'
                     );
                 }
@@ -413,5 +407,4 @@ var broker = window.Urth['urth-core-channel-broker'].getChannelBroker();
             return singleton;
         }
     })();
-    </script>
-</dom-module>
+</script>

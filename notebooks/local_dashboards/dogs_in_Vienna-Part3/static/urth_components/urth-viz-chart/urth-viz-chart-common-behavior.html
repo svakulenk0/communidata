@@ -9,7 +9,6 @@
 <link rel="import" href="../urth-viz-col/urth-viz-col.html">
 <link rel="import" href="../urth-viz-behaviors/urth-viz-selection-behavior.html">
 <link rel="import" href="../urth-core-behaviors/error-display-behavior.html">
-<link rel="import" href="../urth-core-behaviors/logging-behavior.html">
 
 <!-- import the nvd3 stylesheet into the main page as well as the shadow dom
      because the nvtooltip is a child of BODY -->
@@ -157,6 +156,17 @@
                 },
 
                 /**
+                 * Object containing UI information based on the current selection.
+                 * Returns an Array of Objects where `multiSelect` is enabled.
+                 */
+                selectionInfo: {
+                    type: Array,
+                    value: function () { return this.multiSelect ? [] : null; },
+                    readOnly: true,
+                    notify: true
+                },
+
+                /**
                  * Allows user to select multiple chart components (bar in barchart, slice in pie chart, etc).
                  */
                 multiSelect: {
@@ -167,8 +177,7 @@
             },
 
         listeners: {
-            'iron-resize': '_resizer',
-            'col-content-changed': '_parseColumns'
+            'iron-resize': '_resizer'
         },
 
         _svgSelection: function(d3) {
@@ -187,7 +196,7 @@
             }
 
             if (this.columns.length && datarows[0] && this.columns.length != datarows[0].length) {
-                this._warn('Warning: arity of columns does not match data');
+                console.warn('Warning: arity of columns does not match data');
             }
 
             var columnSettings = this.columnSettings;
@@ -234,12 +243,9 @@
         },
 
         _parseColumns: function() {
-            var columnSettings = this.columnSettings = [],
-                columnElements = Array.prototype.slice.call(
-                    Polymer.dom(this.$.content).getDistributedNodes());
-
-            columnElements.forEach(function (col) {
-                if (col.hasAttribute && col.hasAttribute('index')) {
+            var columnSettings = this.columnSettings = [];
+            this.queryAllEffectiveChildren('urth-viz-col').forEach(function (col) {
+                if (col.hasAttribute('index')) {
                     var index = col.getAttribute('index');
                     var set = columnSettings[index] = {};
                     ["type", "format"].forEach(function(prop) {
@@ -268,10 +274,11 @@
                             break;
 
                         case 'date':
-                            if (this.type != 'bar' && this.type != 'pie') {
-                                this.chart[dataIndex == this.primary ? 'xScale' : 'yScale'](d3.time.scale.utc());
-                            }
-                            axis.tickFormat(d3.time.format.utc(axisSettings.format || '%c'));
+//                            Cannot use time scale for discrete values (e.g. bar)  Need to explicitly convert to Date
+//                              chart[dataIndex == this.primary ? 'xScale' : 'yScale'](d3.time.scale());
+                            axis.tickFormat(axisSettings.format ?
+                                function(d) { return d3.time.format(axisSettings.format)(new Date(d)); }
+                                : function(d) { return new Date(d).toLocaleDateString(); });
                             break;
 
                         default:
@@ -471,21 +478,6 @@
                         config(chart);
                     }
 
-                    // Convert xbounds to dates, if needed
-                    if (this.columnSettings && this.columnSettings[this.primary] && this.columnSettings[this.primary].type == 'date') {
-                        this.xbounds = this.xbounds && this.xbounds.map(function(d) { return new Date(d); });
-                        if (this.datarows.length === 1 && !this.xbounds) {
-                            // Create a domain to work around issue novus/nvd3#1703
-                            var point = +new Date(this.datarows[0][0]), delta = 24*60*60*1000;
-                            this.xbounds = [new Date(point - delta), new Date(point + delta)];
-                        }
-                    }
-
-                    // Convert ybounds to dates, if needed
-                    if (this.columnSettings && this.columnSettings[this.secondary || 1] && this.columnSettings[this.secondary || 1].type == 'date') {
-                        this.ybounds = this.ybounds && this.ybounds.map(function(d) { return new Date(d); });
-                    }
-
                     this._formatAxes();
 
                     if (this.height) {
@@ -647,21 +639,6 @@
             this.async(func);
         },
 
-        /**
-         * Adds a mutation observer to react to changes to count of `urth-viz-col` child
-         * elements.
-         */
-        attached: function(){
-            this._contentObserver = Polymer.dom(this.$.content).observeNodes(this._parseColumns.bind(this));
-        },
-
-        /**
-         * Remove mutation observer
-         */
-        detached: function(){
-            Polymer.dom(this.$.content).unobserveNodes(this._contentObserver);
-        },
-
         _resizer: function() {
             if (this.chart) {
                 this.chart.update();
@@ -674,8 +651,7 @@
         Polymer.IronResizableBehavior,
         Urth.VizSelectionBehavior,
         Urth.DisplayErrorBehavior,
-        Urth.VizChartCommonBehaviorImpl,
-        Urth.LoggingBehavior
+        Urth.VizChartCommonBehaviorImpl
     ];
 
 })();

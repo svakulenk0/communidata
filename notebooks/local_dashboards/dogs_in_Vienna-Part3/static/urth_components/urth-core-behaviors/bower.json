@@ -21,8 +21,5 @@
     "test",
     "tests"
   ],
-  "dependencies": {
-    "promise-polyfill": "polymerlabs/promise-polyfill#^1.0.0"
-  },
   "private": true
 }

@@ -3,7 +3,6 @@
 # Distributed under the terms of the Modified BSD License.
 -->
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../urth-core-behaviors/logging-behavior.html">
 
 <!--
  Provides an API to persist key value pairs.
@@ -43,7 +42,7 @@
                 localStorage.removeItem(STORAGE_PREFIX);
                 return true;
             } catch(e) {
-                this._debug('Storage is disabled. Client state is not persisted.');
+                console.debug('Storage is disabled. Client state is not persisted.');
                 return false;
             }
         }
@@ -73,8 +72,6 @@
                     value: '__default__'
                 }
             },
-
-            behaviors: [Urth.LoggingBehavior],
 
             /**
              * Removes all of the keys for the configured collection from
@@ -149,7 +146,7 @@
                             localStorage.setItem(this._getPrefixedKey(key),
                                 JSON.stringify(value));
                         } catch(e) {
-                            this._error('Failed to save ' + key + ' to storage.', e);
+                            console.error('Failed to save ' + key + ' to storage.', e);
                         }
                     } else {
                         this.remove(key);

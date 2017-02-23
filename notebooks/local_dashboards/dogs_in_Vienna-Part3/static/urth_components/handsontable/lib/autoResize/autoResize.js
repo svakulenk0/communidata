@@ -46,8 +46,8 @@ function autoResize() {
       else {
         text.data = el.value + newChar; //IE8
       }
-      span.style.fontSize = getComputedStyle(el).fontSize;
-      span.style.fontFamily = getComputedStyle(el).fontFamily;
+      span.style.fontSize = Handsontable.Dom.getComputedStyle(el).fontSize;
+      span.style.fontFamily = Handsontable.Dom.getComputedStyle(el).fontFamily;
       span.style.whiteSpace = "pre";
 
       body.appendChild(span);
@@ -153,15 +153,10 @@ function autoResize() {
         observe(el, 'paste', delayedResize);
         observe(el, 'drop', delayedResize);
         observe(el, 'keydown', delayedResize);
-        observe(el, 'focus', resize);
       }
 
       resize();
     };
-
-  function getComputedStyle(element) {
-    return element.currentStyle || document.defaultView.getComputedStyle(element);
-  }
 
   return {
     init: function (el_, config, doObserve) {
@@ -173,7 +168,6 @@ function autoResize() {
       unObserve(el, 'paste', delayedResize);
       unObserve(el, 'drop', delayedResize);
       unObserve(el, 'keydown', delayedResize);
-      unObserve(el, 'focus', resize);
     },
     resize: resize
   };

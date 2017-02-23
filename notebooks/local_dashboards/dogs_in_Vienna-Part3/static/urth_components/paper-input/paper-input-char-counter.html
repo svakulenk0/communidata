@@ -41,10 +41,6 @@ Custom property | Description | Default
         @apply(--paper-input-char-counter);
       }
 
-      :host([hidden]) {
-        display: none !important;
-      }
-
       :host-context([dir="rtl"]) {
         float: left;
       }
@@ -87,7 +83,7 @@ Custom property | Description | Default
 
       state.value = state.value || '';
 
-      var counter = state.value.toString().length.toString();
+      var counter = state.value.length.toString();
 
       if (state.inputElement.hasAttribute('maxlength')) {
         counter += '/' + state.inputElement.getAttribute('maxlength');

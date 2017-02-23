@@ -61,8 +61,8 @@
              */
             sinon.stub(Urth["urth-core-function"].prototype, "createModel");
             sinon.stub(Urth["urth-core-function"].prototype, "displayErrorMessage");
-            sinon.stub(Urth.ExecutionCompleteBehavior[0], "ready");
-            sinon.stub(Urth.ExecutionCompleteBehavior[0], "detached");
+            sinon.stub(Urth.ExecutionCompleteBehavior, "ready");
+            sinon.stub(Urth.ExecutionCompleteBehavior, "detached");
         });
 
         // STEP 5: Define suite(s) and tests.
@@ -322,38 +322,6 @@
                 });
                 expect(fElmt.isValid()).to.be.false;
             });
-
-            it('should return false if any required args in signature has null value in args', function() {
-                var fElmt = fixture('basic');
-
-                fElmt.args = {
-                    x: "5",
-                    y: "4",
-                    z: null
-                }
-                fElmt._setSignature({
-                    x: {'required': true},
-                    y: {'required': true},
-                    z: {'required': true}
-                });
-                expect(fElmt.isValid()).to.be.false;
-            });
-
-            it('should return true if an optional arg in signature has null value in args', function() {
-                var fElmt = fixture('basic');
-
-                fElmt.args = {
-                    x: "5",
-                    y: "4",
-                    z: null
-                }
-                fElmt._setSignature({
-                    x: {'required': true},
-                    y: {'required': true}
-                });
-                expect(fElmt.isValid()).to.be.true;
-            });
-
 
             it('should return false if more required args in signature than are in args', function() {
                 var fElmt = fixture('basic');

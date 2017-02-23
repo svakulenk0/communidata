@@ -75,7 +75,7 @@ CopyPasteClass.prototype.init = function () {
         }
         this.value = clipboardContents;
 
-        event.preventDefault();
+        return false;
       }
     };
     style = this.elTextarea.style;
@@ -132,7 +132,7 @@ CopyPasteClass.prototype.onKeyDown = function(event) {
     }, 0);
   }
 
-  if (event.isImmediatePropagationEnabled !== false && isCtrlDown &&
+  if (isCtrlDown &&
       (event.keyCode === 67 ||
       event.keyCode === 86 ||
       event.keyCode === 88)) {

@@ -5,83 +5,20 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../urth-core-behaviors/jupyter-widget-behavior.html">
 <link rel="import" href="../urth-core-behaviors/execution-complete-behavior.html">
-<link rel="import" href="urth-core-query-filter.html">
-<link rel="import" href="urth-core-query-group.html">
-<link rel="import" href="urth-core-query-sort.html">
 
 <!--
-This element represents a DataFrame. The `ref` property points to an instance of a DataFrame in the
-kernel. Currently, there is support for:
-
-* Pandas DataFrame
-* PySpark DataFrame
-* Spark DataFrame in Scala
-* R DataFrame
-* Spark DataFrame in R
-
-The data for the DataFrame is available in a variety of way:
-
-* The `value` property has an Object representation of the DataFrame.
-* The `rows` property has only the data portion of the DataFrame and can be structured as a 2D Array or
-an Array of Objects.
-* The `columns` property has an Array of column names
-
-The amount of data rows that is made available to this element from the kernel instance is controled by
-the `limit` property.
+Represents a widget that binds to a DataFrame variable. The DataFrame's
+representation is surfaced in the 'value' property.
 
 Example:
 
-    <urth-core-dataframe id="f1" ref="aDataFrame" value="{{df}}" auto></urth-core-dataframe>
-
-    <urth-core-dataframe id="f1" ref="aDataFrame" rows="{{rows}}" columns="{{cols}}" auto></urth-core-dataframe>
-
-    <urth-core-dataframe id="f1" ref="aDataFrame" rows="{{rows}}" rows-as-object auto></urth-core-dataframe>
-
-This element also support querying the DataFrame using the `urth-core-query-*` elements as children.
-
-Example:
-    <urth-core-dataframe id="f1" ref="aDataFrame" value="{{df}}">
-        <urth-core-query-filter>aCol > {{someVal}}</urth-core-query-filter>
-        <urth-core-query-group by="anotherCol">
-            <urth-core-query-agg op="avg" col="someOtherCol"></urth-core-query-agg>
-        </urth-core-query-group>
-    </urth-core-dataframe>
+    <urth-core-dataframe id="f1" ref="aDataFrame" value="{{x}}" auto></urth-core-dataframe>
 
 @group Urth Core
 @element urth-core-dataframe
 -->
-<dom-module id="urth-core-dataframe">
-    <style>
-        #queries {
-            display: none;
-        }
-    </style>
-    <template>
-        <template is="dom-if" if="{{debug}}">
-            <table>
-                <thead>
-                    <tr>
-                        <template is="dom-repeat" items="{{value.columns}}">
-                            <th>{{item}}</th>
-                        </template>
-                    </tr>
-                </thead>
-                <tbody>
-                    <template is="dom-repeat" items="{{_head(value.data)}}" as="r">
-                        <tr>
-                            <template is="dom-repeat" items="{{r}}" as="c">
-                                <td>{{c}}</td>
-                            </template>
-                        </tr>
-                    </template>
-                </tbody>
-            </table>
-        </template>
-        <content id="queries" select="urth-core-query-filter,urth-core-query-group,urth-core-query-sort"></content>
-    </template>
-</dom-module>
-
 <script>
+
 (function(){
     'use strict';
 
@@ -102,58 +39,12 @@ Example:
             },
 
             /**
-             * The serialized representation of the DataFrame `ref`. The structure contains:
-             * {
-             *  columns: Array of column names
-             *  columnTypes: Array of column type names
-             *  data: 2D Array of rows with column values
-             *  index: Array with index values
-             * }
+             * The serialized representation of the DataFrame `ref`.
              */
             value: {
                 type: Object,
                 readOnly: true,
                 notify: true
-            },
-
-            /**
-             * An Array with the column names for the DataFrame
-             */
-            columns: {
-                type: Array,
-                computed: '_columns(value)',
-                notify: true
-            },
-
-            /**
-             * Column type metadata for the DataFrame
-             */
-             columnTypes: {
-                type: Array,
-                computed: '_columnTypes(value)',
-                notify: true
-             },
-
-            /**
-             * An Array containing the data rows of the DataFrame. If 'row-as-object` is false, this
-             * property will contain a 2D Array where the outer Array contains each row and the inner Array contains
-             * the values for each column in the order defined by the `columns` property. If 'row-as-object` is true,
-             * this property will contain an Array of Objects, where each Object represents a row of data with column
-             * values keyed by column names.
-             */
-            rows: {
-                type: Array,
-                computed: '_rows(value, rowAsObject)',
-                notify: true
-            },
-
-            /**
-             * Controls the shape of the `rows` property. If true, `rows` is an Array of Objects, else `rows` is a 2D
-             * Array.
-             */
-            rowAsObject:{
-                type: Boolean,
-                value: false
             },
 
             /**
@@ -165,66 +56,13 @@ Example:
             },
 
             /**
-             * If true, it means that the element is waiting on the kernel to return the data
-             */
-            busy: {
-                type: Boolean,
-                value: false,
-                notify: true,
-                readOnly: true
-            },
-
-            /**
-             * If true, this element will render a simple table help inspect the data
-             */
-            debug: {
-                type: Boolean,
-                value: false
-            },
-
-            /**
              * Sets the maximun number of rows to bring to the client.
              */
             limit: {
-                type: Number,
-                value: 100,
-                reflectToAttribute: true,
-                observer: '_onLimitChange'
-            },
-
-            /**
-             * An Array with a JSON structures that define queries to perform on the DataFrame.
-             */
-            query: {
-                type: Array,
-                readOnly: true,
-                observer: '_onQueryChange'
-            },
-
-            /**
-             * Array with the child elements used to define the query.
-             */
-            queryChildren: {
-                type: Array,
-                readOnly: true
-            },
-
-            /**
-             * Time to debounce synchronizing changes to the query with the kernel component.
-             */
-            queryDelay: {
-                type: Number,
-                value: 750
-            },
-
-            /**
-             * Amount of time to wait (milliseconds) for a refresh/sync call to complete. This allows for throttling messages to get the
-             * data from the DataFrame. In cases like Spark, getting the data may take a long time and this setting allows
-             * throttling request to avoid overloading the DataFrame host.
-             */
-            refreshTimeout: {
-                type: Number,
-                value: 10000
+              type: Number,
+              value: 100,
+              reflectToAttribute: true,
+              observer: '_onLimitChange'
             }
         },
 
@@ -233,44 +71,30 @@ Example:
             Urth.ExecutionCompleteBehavior
         ],
 
-        observers: [
-            '_handleChildChanged(queryChildren)'
-        ],
-
         listeners: {
             'watch_notify': 'refresh'
         },
 
         created: function(){
-            this._debug('urth-core-datafram created', arguments);
-            this.createModel('declarativewidgets.DataFrame');
+            console.debug('urth-core-datafram created', arguments);
+            this.createModel('urth.widgets.widget_dataframe.DataFrame');
         },
 
         ready: function() {
-            this._debug("urth-core-dataframe ready");
-
-            this._contentObserver = Polymer.dom(this.$.queries).observeNodes(this._handleQueryChildrenChanged.bind(this));
-            this._handleQueryChildrenChanged();
-        },
-
-        /**
-         * Remove mutation observer
-         */
-        detached: function(){
-            Polymer.dom(this.$.queries).unobserveNodes(this._contentObserver);
+            console.debug("urth-core-dataframe ready");
         },
 
         /*
          * onModelReady is invoked when have created the model portion of the widget
          */
         onModelReady: function(){
-            this._debug('urth-core-dataframe onModelReady');
+            console.debug('urth-core-dataframe onModelReady');
 
             var syncData = {
                 variable_name: this.ref,
                 limit: this.limit
-            };
-            this._debug('urth-core-dataframe sending initial sync', syncData);
+            }
+            console.debug('urth-core-dataframe sending initial sync', syncData);
             this.sync(syncData);
 
             this.refresh();
@@ -281,31 +105,8 @@ Example:
          * the Backbone model changes.
          */
         onModelValueChange: function(newVal){
-            this._debug( "urth-core-dataframe onModelValueChange", newVal );
-            newVal = this._deserializeDataTypes(newVal || {data:[], columns: []});
-            this._setValue(newVal);
-        },
-
-        /*
-         * Returns the dataFrame with deserialized Data types of the dataFrame reconstructed via the columnTypes
-         * @param df - the serialized DataFrame
-         * @return the reconstructed/deserialized DataFrame data types
-         */
-        _deserializeDataTypes: function(df) {
-            if (!df.columnTypes || !df.data) {
-                return df;
-            }
-
-            // JSON accounts for JS primitive types.  Only need to convert Dates.
-
-            for (var i = 0; i < df.columnTypes.length; i++) {
-                if (df.columnTypes[i] == "Date") {
-                    df.data.forEach(function(row) {
-                        row[i] = new Date(row[i]);
-                    });
-                }
-            }
-            return df;
+            console.debug( "urth-core-dataframe onModelValueChange", newVal );
+            this._setValue(newVal || {data:[]});
         },
 
         /* 
@@ -317,7 +118,6 @@ Example:
               this._clearErrorMessages();
             } else {
               this.displayErrorMessage(newStatus.msg);
-              this.onModelValueChange(); // need to set value to empty data on error
             }
         },
 
@@ -334,134 +134,21 @@ Example:
          * @method refresh
          */
         refresh: function() {
-            if( this.busy ){
-                this._refreshQueued = true;
-                return;
-            }
-
             var jName = "urth-core-dataframe.refresh";
             if( this.isDebouncerActive(jName) ) {
                 this.cancelDebouncer(jName);
             }
 
             this.debounce(jName, function(){
-                this._debug("urth-core-dataframe sending sync message...");
-
-                this._setBusy(true);
-                var promiseHandler = function(){
-                    this._setBusy(false);
-
-                    if(this._refreshQueued){
-                        this._refreshQueued = false;
-                        this.refresh();
-                    }
-
-                }.bind(this);
-
-                this.send({ "event": "sync" }, this.refreshTimeout).then(promiseHandler);
+              console.debug("urth-core-dataframe sending sync message...");
+              this.send({ "event": "sync" });
             }.bind(this), 200);
         },
 
-        /**
-         * Returns the columns portion of the serialized DataFrame
-         * @param df - the serialized DataFrame
-         * @return the columns array
-         * @private
-         */
-        _columns: function(df){
-            return df.columns;
-        },
-
-        /**
-         * Returns the type information of the serialized Dataframe
-         * @param df - the serialized DataFrame
-         * @return the types array, where each element is a type name of that particular column
-         * @private
-         */
-        _columnTypes: function(df){
-            return df.columnTypes;
-        },
-
-        /**
-         * Returns the structure query based on the child query elements
-         * @param queryChildren - Array of child nodes
-         * @return the query structure
-         * @private
-         */
-        _query: function(queryChildren){
-            return queryChildren.map(function(qElt){return qElt.query}).filter(function(q){return !!q});
-        },
-
-        /**
-         * Returns the data portion of the serialized DataFrame as a 2D array or as an Array of Objects depending on the
-         * value of `rowAsObject`.
-         * @param df - the serialized DataFrame
-         * @param rowAsObject
-         * @private
-         */
-        _rows: function(df, rowAsObject){
-            return !rowAsObject
-                        ? df.data
-                        : df.data.map(function(row){
-                            var rowObj = {};
-                            row.forEach(function(col, idx){
-                                rowObj[df.columns[idx]] = col;
-                            })
-                            return rowObj;
-                        });
-        },
-
         _onLimitChange: function(){
-            this._debug('urth-core-dataframe sending new limit value', this.limit);
+            console.debug('urth-core-dataframe sending new limit value', this.limit);
             this.sync({limit: this.limit});
             this.refresh();
-        },
-
-        _handleQueryChildrenChanged: function(){
-            if(!this._handleChildChangedListener){
-                this._handleChildChangedListener = this._handleChildChanged.bind(this);
-            }
-
-            (this.queryChildren || []).forEach(function(child){
-                child.removeEventListener("query-changed", this._handleChildChangedListener);
-            }.bind(this));
-
-            var queryChildren = Array.prototype.slice.call(
-                    Polymer.dom(this.$.queries).getDistributedNodes());
-
-            queryChildren.forEach(function(child){
-                child.addEventListener("query-changed", this._handleChildChangedListener);
-            }.bind(this));
-
-            this._setQueryChildren(queryChildren);
-        },
-
-        _handleChildChanged: function(){
-            this._setQuery(this._query(this.queryChildren));
-        },
-
-        _onQueryChange: function(){
-            var jName = "urth-core-dataframe.query_change";
-            if( this.isDebouncerActive(jName) ) {
-                this.cancelDebouncer(jName);
-            }
-
-            this.debounce(jName, function(){
-                this._debug('urth-core-dataframe sending new query value', this.query);
-                this.sync({query: JSON.stringify(this.query)});
-                this.refresh();
-            }.bind(this), this.queryDelay);
-        },
-
-        /**
-         * Returns at most 10 elements from the array
-         *
-         * @param rows - All the data
-         * @return {Array}
-         * @private
-         */
-        _head: function(rows){
-            return rows.slice(0, 10);
         }
 
     });

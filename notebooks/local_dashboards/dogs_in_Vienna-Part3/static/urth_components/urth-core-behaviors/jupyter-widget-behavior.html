@@ -6,10 +6,7 @@
 <!--
 This behavior is used to encapsulate some of the services needed for ipywidgets.
 -->
-<link rel="import" href="../promise-polyfill/promise-polyfill-lite.html">
 <link rel='import' href='error-display-behavior.html'>
-<link rel='import' href='logging-behavior.html'>
-
 <script>
     (function() {
         'use strict';
@@ -47,7 +44,7 @@ This behavior is used to encapsulate some of the services needed for ipywidgets.
             },
 
             _doCreateModel: function(){
-                this._debug('Urth.JupyterWidgetBehavior createModel', this.kernelClass);
+                console.debug('Urth.JupyterWidgetBehavior createModel', this.kernelClass);
                 Urth.kernel.widget_manager.new_widget(
                     {
                         model_module: 'jupyter-decl-widgets/DeclWidgetModel',
@@ -62,7 +59,7 @@ This behavior is used to encapsulate some of the services needed for ipywidgets.
                             return;
                         }
 
-                        this._log('Model creation successful!', model);
+                        console.log('Model creation successful!', model);
                         this.__modelChangeCallback = this._onModelChange.bind(this);
                         this.__commCloseCallback = this._handleCommDisconnect.bind(this);
 
@@ -70,13 +67,12 @@ This behavior is used to encapsulate some of the services needed for ipywidgets.
                         model.once('comm:close', this.__commCloseCallback);
 
                         this.model = model;
-                        this.onModelChange(model);
                         this.onModelReady();
                         this.fire('connected');
                     }.bind(this),
                     function(error){
-                        this._error(error);
-                    }.bind(this)
+                        console.error(error);
+                    }
                 );
             },
 
@@ -93,9 +89,9 @@ This behavior is used to encapsulate some of the services needed for ipywidgets.
             },
 
             _retryCreateModel: function(){
-                this._debug('Urth.JupyterWidgetBehavior _retryCreateModel - Waiting for another code exec...');
+                console.debug('Urth.JupyterWidgetBehavior _retryCreateModel - Waiting for another code exec...');
                 this.__shellReplyCallback = function(){
-                    this._debug('Urth.JupyterWidgetBehavior createModel - retrying...');
+                    console.debug('Urth.JupyterWidgetBehavior createModel - retrying...');
                     this._doCreateModel();
                 }.bind(this);
 
@@ -105,7 +101,7 @@ This behavior is used to encapsulate some of the services needed for ipywidgets.
             },
 
             _handleCommDisconnect: function(){
-                this._debug('Urth.JupyterWidgetBehavior _handleCommDisconnect - Model comm got closed');
+                console.debug('Urth.JupyterWidgetBehavior _handleCommDisconnect - Model comm got closed');
                 if( this.retryCount > 0 ){
                     try{
                         this._retryCreateModel();
@@ -114,7 +110,7 @@ This behavior is used to encapsulate some of the services needed for ipywidgets.
                         this.retryCount--;
                     }
                 } else {
-                    this._error('Urth.JupyterWidgetBehavior no longer retrying createModel!');
+                    console.error('Urth.JupyterWidgetBehavior no longer retrying createModel!');
                 }
             },
 
@@ -140,57 +136,19 @@ This behavior is used to encapsulate some of the services needed for ipywidgets.
             },
 
             /**
-             * Sends a message to the kernel side proxy of this element. A promise is returned to notify when the message
-             * had been processed by the kernel (i.e. status back to idle). It is not intended to get data, rather meant
-             * to allow clients to throttle messages.
+             * Sends a message to the kernel side proxy of this element.
              *
              * @method send
              * @param {Object} msg A json message.
-             * @param {Number} timeout The time in (milliseconds) to wait for a response before rejecting the promise. If not set, the promise may never be rejected.
-             * @return {Promise}
              */
-            send: function( msg, timeout ){
-                return new Promise(function(resolve, reject){
-                    if(this.isConnected()){
-                        this._debug('Urth.JupyterWidgetBehavior send - sending message', msg);
-
-                        var isResolved = false;
-                        var isRejected = false;
-
-                        /*
-                         * augmenting the iopub.status callback to handle the promise
-                         * this.callbacks already returns an object that will at least have callbacks.iopub = {}
-                         */
-                        var callbacks = this._callbacks();
-                        var ipy_status_handler = callbacks.iopub.status || function(){};
-
-                        callbacks.iopub.status = function(msg){
-                            try{
-                                ipy_status_handler(msg);
-                            }
-                            catch(e){}
-
-                            if(msg.content.execution_state === 'idle' && !isRejected){
-                                isResolved = true;
-                                resolve();
-                            }
-                        }
-                        this.model.send(msg, callbacks);
-
-                        if( timeout && timeout > 0 ){
-                            this.async(function(){
-                                if(!isResolved) {
-                                    isRejected = true;
-                                    reject();
-                                }
-                            }, timeout);
-                        }
-                    }
-                    else{
-                        this._warn('Urth.JupyterWidgetBehavior send - model not ready, cannot send message');
-                        resolve(new Error('Model not ready, cannot send message'));
-                    }
-                }.bind(this));
+            send: function( msg ){
+                if(this.isConnected()){
+                    console.debug('Urth.JupyterWidgetBehavior send - sending message', msg);
+                    this.model.send(msg, this._callbacks());
+                }
+                else{
+                    console.warn('Urth.JupyterWidgetBehavior send - model not ready, cannot send message');
+                }
             },
 
             /**
@@ -202,7 +160,7 @@ This behavior is used to encapsulate some of the services needed for ipywidgets.
              */
             sync: function( values ){
                 if(this.isConnected()) {
-                    this._debug('Urth.JupyterWidgetBehavior sync - sending values', values);
+                    console.debug('Urth.JupyterWidgetBehavior sync - sending values', values);
                     var valKeys = Object.keys(values || {});
                     valKeys.forEach(function (value) {
                         this.model.set(value, values[value], {silent: true});
@@ -212,7 +170,7 @@ This behavior is used to encapsulate some of the services needed for ipywidgets.
                         this.model.save_changes();
                 }
                 else{
-                    this._warn('Urth.JupyterWidgetBehavior sync - model not ready, cannot sync');
+                    console.warn('Urth.JupyterWidgetBehavior sync - model not ready, cannot sync');
                 }
             },
 
@@ -267,7 +225,7 @@ This behavior is used to encapsulate some of the services needed for ipywidgets.
             onModelReady: function(){},
 
             _onModelChange: function(options){
-                this._debug('Urth.JupyterWidgetBehavior _onModelChange', options);
+                console.debug('Urth.JupyterWidgetBehavior _onModelChange', options);
                 var changes = options.changed;
                 Object.keys(changes).forEach(function(change){
                     var funcName = "onModel"+(change[0].toUpperCase()+change.substring(1))+"Change";
@@ -302,7 +260,7 @@ This behavior is used to encapsulate some of the services needed for ipywidgets.
 
                 if (newVal.status === "error") {
                     this.displayErrorMessage(newVal.msg);
-                } /* the error message can be cleared once user executes the cell and there's no kernel or client side error (see any widget element's code) */
+                } /* the error message can be cleared once user excecutes the cell and there's no kernel or client side error (see any widget element's code) */
             },
 
             /**
@@ -317,6 +275,6 @@ This behavior is used to encapsulate some of the services needed for ipywidgets.
         };
 
         // JupyterWidgetBehavior inherits DisplayErrorBehavior
-        Urth.JupyterWidgetBehavior = [Urth.DisplayErrorBehavior, Urth.JupyterWidgetBehaviorImpl, Urth.LoggingBehavior];
+        Urth.JupyterWidgetBehavior = [Urth.DisplayErrorBehavior, Urth.JupyterWidgetBehaviorImpl];
     })();
 </script>

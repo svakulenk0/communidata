@@ -9,9 +9,8 @@
   "bugs": {
     "url": "https://github.com/handsontable/handsontable/issues"
   },
-  "main": "./dist/handsontable.js",
   "author": "Handsoncode <hello@handsontable.com>",
-  "version": "0.25.1",
+  "version": "0.22.0",
   "keywords": [
     "data",
     "grid",
@@ -28,8 +27,8 @@
     "data-spreadsheet"
   ],
   "dependencies": {
-    "moment": "^2.13.0",
-    "pikaday": "^1.4.0",
+    "moment": "^2.9.0",
+    "pikaday": "^1.3.2",
     "zeroclipboard": "^2.2.0"
   },
   "devDependencies": {
@@ -41,13 +40,14 @@
     "grunt-gitinfo": "~0.1.6",
     "grunt-jscs": "^2.5.0",
     "grunt-saucelabs": "~8.3.3",
-    "hot-builder": "^0.5.0",
+    "hot-builder": "^0.4.0",
     "load-grunt-tasks": "^3.3.0",
     "time-grunt": "^1.2.2"
   },
   "scripts": {
     "test": "grunt test -v"
   },
+  "browser": "./src/browser.js",
   "license": "MIT",
   "builderDependencies": {
     "moment": {

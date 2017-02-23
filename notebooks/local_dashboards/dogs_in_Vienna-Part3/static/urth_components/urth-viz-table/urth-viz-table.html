@@ -39,10 +39,6 @@ The table accepts data via attribute `datarows` and column headers via attribute
             white-space: normal;
         }
 
-        .handsontable td.htDimmed{
-            color: black; /* We set Hot to be readOnly, that causes text to be grey */
-        }
-
         .handsontable .manualColumnResizer,
         .handsontable .manualRowResizer,
         .ht_clone_top, .ht_clone_left,
@@ -52,8 +48,8 @@ The table accepts data via attribute `datarows` and column headers via attribute
         }
         </style>
 
-        <table id="tableContainer" style="width:100%;"></table>
-        <content id="content" select="urth-viz-col"></content>
+        <table id="tableContainer" style="width:100%; height:auto;"></table>
+        <content></content>
     </template>
     <script>
     (function () {
@@ -83,7 +79,7 @@ The table accepts data via attribute `datarows` and column headers via attribute
                  */
                 tableView: {
                     type: Object,
-                    computed: '_computeTableView(datarows, columns)'
+                    computed: 'computeTableView(datarows, columns)'
                 },
 
                 /**
@@ -96,28 +92,6 @@ The table accepts data via attribute `datarows` and column headers via attribute
                     type: Number,
                     value: 15,
                     reflectToAttribute: true
-                },
-
-                /**
-                 * Name of column that the table is sorted by
-                 */
-                sortColumn: {
-                    type: String,
-                    notify: true
-                },
-
-                /**
-                 * 'asc' or 'desc' for the sort order the sortColumn is sorted by
-                 */
-                sortOrder: {
-                    type: String,
-                    notify: true
-                },
-
-                disableLocalSort: {
-                    type: Boolean,
-                    value: false,
-                    notify: true
                 }
             },
 
@@ -130,8 +104,7 @@ The table accepts data via attribute `datarows` and column headers via attribute
             ],
 
             listeners: {
-                'iron-resize': '_resizeTable',
-                'col-content-changed': '_updateColumns'
+                'iron-resize': '_resizeTable'
             },
 
             ROW_HEIGHT: 25,
@@ -148,32 +121,23 @@ The table accepts data via attribute `datarows` and column headers via attribute
             },
 
             _updateColumns: function (newColumns) {
-                if (!newColumns || !this.datarows) { return; }
+                if(!newColumns) { return; }
 
                 var columnSettings = this._parseColumns();
                 this.hot.updateSettings({
                   colHeaders: newColumns,
                   columns: columnSettings
                 });
-
-                // check if sortColumn is still in newColumns
-                var keepSortColumn = newColumns.some(function(col) {
-                    return col == this.sortColumn;
-                }.bind(this));
-                if (!keepSortColumn) {
-                    this.sortColumn = "";
-                    this.sortOrder = "";
-                }
             },
 
             _updateDatarows: function (newDataRows) {
-                if (!newDataRows) { return; }
+                if(!newDataRows) { return; }
                 if (!Array.isArray(newDataRows[0]) && newDataRows.length) {
                     newDataRows = [newDataRows];
                 }
 
                 // if data will not fit, we need to add a height to table to add scrollbar
-                if (!this._willDataFit(newDataRows)) {
+                if(!this._willDataFit(newDataRows)) {
                     this.hot.loadData(newDataRows);
 
                     this.hot.updateSettings({
@@ -188,21 +152,19 @@ The table accepts data via attribute `datarows` and column headers via attribute
                         this.hot.loadData(newDataRows);
                     }
                 }
-
-                // this could have been a result of kernel sort, so need to handle selection after sort
-                this._handleAfterSort();
             },
 
-            _computeTableView: function(datarows, columns) {
+            computeTableView: function(datarows, columns) {
                 var jName = "computeTableView";
-                if (this.isDebouncerActive(jName) ) {
+                if( this.isDebouncerActive(jName) ) {
                     this.cancelDebouncer(jName);
                 }
                 this.debounce(jName, function () {
-                    this._clearErrorMessages();
                     if (!datarows || !columns) {
+                        this.displayErrorMessage("urth-viz-table: invalid datarows or columns");
                         return;
                     }
+                    this._clearErrorMessages();
                     if (this.hot) {
                         this._updateColumns(columns);
                         this._updateDatarows(datarows);
@@ -212,7 +174,6 @@ The table accepts data via attribute `datarows` and column headers via attribute
                         // reset selection to null if it was previously set
                         if (this.selection) {
                             this._setSelection(null);
-                            this._setSelectionInfo(null);
                             // deselect range that was previously highlighted
                             this.hot.deselectCell();
                         }
@@ -227,12 +188,7 @@ The table accepts data via attribute `datarows` and column headers via attribute
              * through the path of selecting the entire row.
              */
             _forceRowSelection: function (event, coords) {
-                this.rowActive = coords.row;
-                this.colActive = coords.col;
                 coords.col = -1; //force row selection
-                if(coords.row == -1) { // if user clicked on header row, they're trying to sort the column, so stop propagation
-                    event.stopImmediatePropagation();
-                }
             },
 
             _selectionIndexChanged: function(newIndex, oldIndex) {
@@ -245,86 +201,27 @@ The table accepts data via attribute `datarows` and column headers via attribute
              * Handle when selection has finished taking place on handson
              */
             _handleSelection: function (rowStart, colStart, rowEnd, colEnd) {
-                this._setSelectionInfo({
-                    rowActive: this.rowActive,
-                    colActive: this.colActive,
-                    rowStart: rowStart,
-                    colStart: colStart,
-                    rowEnd: rowEnd,
-                    colEnd: colEnd
-                });
-
-                // store selectionIndex. If selected header row, then don't do anything, keep the old index
-                this.selectionIndex = this.rowActive > -1 ? this.rowActive : this.selectionIndex;
-
-                // Set selection
-                var selection = this.datarows[this.selectionIndex];
-
-                // if the table has been sorted, the selected row might have been moved
-                // to a different index.
-                if (this.hot.sortIndex.length > 0 && this.selectionIndex > -1) {
-                    var logicalIndex = this.hot.sortIndex[this.selectionIndex][0];
-                    selection = this.datarows[logicalIndex];
-                }
-
-                // set selection to wither object or array
-                if (this.selectionAsObject) {
-                    var selObj = {};
-                    var row = selection;
+                // if table has been sorted, we need to get physical index of the row in the datasource
+                // since rowStart is only the logical index of the table view
+                var physicalIndex = this.hot.sortIndex.length > 0 ?
+                                        this.hot.sortIndex[rowStart][0] : rowStart;
+                this.selectionIndex = physicalIndex;
+                if(this.selectionAsObject) {
+                    var sel = {};
+                    var row = this.datarows[physicalIndex];
                     this.columns.forEach(function(col, i) {
                         col = col.replace(" ", "_");
-                        selObj[col] = row[i];
+                        sel[col] = row[i];
                     });
-                    this._setSelection(selObj);
+                    this._setSelection(sel);
                 } else {
-                    this._setSelection(selection);
+                    this._setSelection(this.datarows[physicalIndex]);
                 }
-            },
-
-            _handleAfterSort: function() {
-                // if there is a previous selection, we need to handle re-highlighting it
-                if (this.selection) {
-                    // since table has been sorted, the selectionIndex is not always the correct index
-                    // of data anymore. Because even though the table view is sorted, this.datarows stays the same
-
-                    // We will find the logical index of the selection (the index in this.datarows)
-                    // and then use that to look up physical index of the table view
-
-                    // find logical index of selection in this.datarows
-                    var sel = this.selection;
-                    var logicalIndex = -1;
-                    this.datarows.some(function(row, rowIndex) {
-                        var matched = row.every(function(col, colIndex) {
-                            return col === sel[colIndex];
-                        });
-                        if (matched) {
-                            logicalIndex = rowIndex;
-                        }
-                        return matched;
-                    });
-
-                    // find physical index of sorted table view
-                    var physicalIndex = logicalIndex;
-                    this.hot.sortIndex.some(function(sortedRow, sortedIndex) {
-                        if(sortedRow[0] == logicalIndex) {
-                            physicalIndex = sortedIndex;
-                            return true;
-                        }
-                    });
-
-                    // update rowActive so _handleSelection can update selectionInfo
-                    this.rowActive = physicalIndex;
-                    if (physicalIndex != -1) {
-                        this.hot.selectCell(physicalIndex, 0, physicalIndex, this.columns.length - 1, true);
-                    } else {
-                        this.selectionIndex = -1;
-                        this.hot.deselectCell();
-                    }
-                }
+                this.selectedRow = rowStart; //storing index
             },
 
             _willDataFit: function(datarows) {
-                return datarows.length < this.rowsVisible;
+                return (datarows.length < this.rowsVisible);
             },
 
             _isHeightSet: function() {
@@ -342,21 +239,22 @@ The table accepts data via attribute `datarows` and column headers via attribute
                 console.assert(datarows);
                 var firstRow = Array.isArray(datarows[0]) ? datarows[0] : datarows;
 
-                if (firstRow && firstRow.length) {
+                if(firstRow && firstRow.length > 0) {
                     var columnSettings = firstRow.map(function (col) {
                         return {
-                            readOnly: true
+                            editor: false
                         };
                     });
 
-                    var columnElements = Array.prototype.slice.call(
-                            Polymer.dom(this.$.content).getDistributedNodes())
-                    columnElements.forEach(function (column) {
-                        var colIndex = column.getAttribute('index');
-                        if (colIndex && columnSettings[colIndex]) {
-                            this._parseColumn(column, columnSettings[colIndex]);
-                        } // else, user didn't provide colIndex --> ignore
-                    }, this);
+                    for (var i = 0, iLen = this.childNodes.length; i < iLen; i++) {
+                        if (this.childNodes[i].nodeName === 'URTH-VIZ-COL') {
+                            var column = this.childNodes[i];
+                            var colIndex = column.getAttribute('index');
+                            if (colIndex && columnSettings[colIndex]) {
+                                this._parseColumn(column, columnSettings[colIndex]);
+                            } // else, user didn't provide colIndex --> ignore
+                        }
+                    }
                     return columnSettings;
                 } else { // ignore if there is no data
 
@@ -366,7 +264,7 @@ The table accepts data via attribute `datarows` and column headers via attribute
             _parseColumn: function(column, colSettings) {
                 this.COL_OPTIONS.forEach(function(opt) {
                     var val = column.getAttribute(opt);
-                    if (val) { colSettings[opt] = val; }
+                    if(val) { colSettings[opt] = val; }
                 });
             },
 
@@ -380,7 +278,6 @@ The table accepts data via attribute `datarows` and column headers via attribute
 
                     var tableContainer = this.$.tableContainer;
                     tableContainer.innerHTML = '';
-                    tableContainer.style.height = 'auto';
 
                     var columnSettings = this._parseColumns();
 
@@ -389,36 +286,15 @@ The table accepts data via attribute `datarows` and column headers via attribute
                         colHeaders: this.columns,
                         fillHandle: false,
                         manualColumnResize: true,
+                        outsideClickDeselects: false,
                         columnSorting: true,
                         sortIndicator: true,
                         columns: columnSettings,
                         stretchH: 'all',
-                        afterDocumentKeyDown: function(row, col) {
-                            var selected = this.hot.getSelected();
-                            if (selected) {
-                                this.rowActive = selected[0];
-                                this.colActive = selected[1];
-                            }
-                        }.bind(this),
                         beforeOnCellMouseDown: this._forceRowSelection.bind(this),
                         afterSelectionEnd: this._handleSelection.bind(this),
-                        afterDeselect: function() {
-                            var index = this.selectionIndex;
-                            this.hot.selectCell(index, 0, index, this.columns.length - 1, true);
-                            this.hot.unlisten();
-                        }.bind(this),
-                        beforeColumnSort: function() {
-                            this.selectionIndex = -1;
-                            if (this.disableLocalSort) {
-                                return false; // if sort column is set, return false to disable Handson sort
-                            }
-                        }.bind(this),
-                        afterColumnSort: function(colIndex, order) {
-                            // store sorted column and sorted order
-                            this.sortColumn = this.columns[colIndex];
-                            this.sortOrder = order ? 'asc' : 'desc';
-
-                            this._handleAfterSort();
+                        afterColumnSort: function() {
+                            this._handleSelection(0);
                         }.bind(this),
                         afterRender: function(isForced) {
                             if (isForced && !this._rendered) {
@@ -469,8 +345,15 @@ The table accepts data via attribute `datarows` and column headers via attribute
                 }
             },
 
+            detached: function() {
+                if (this.hot) {
+                    this.hot.destroy();
+                    this.hot = null;
+                }
+            },
+
             ready: function() {
-                this.async(function() {
+                this.async(function(){
                     var display = window.getComputedStyle(this).display;
                     if (display === 'none' || document.readyState !== 'complete') {
                         this.async(this.ready, 200);
@@ -478,29 +361,11 @@ The table accepts data via attribute `datarows` and column headers via attribute
                         if (this.datarows) {
                             this._createTable(this.datarows);
                             this._clearErrorMessages();
+                        } else {
+                            this.displayErrorMessage("urth-viz-table: invalid datarows");
                         }
                     }
                 }.bind(this));
-            },
-
-            /**
-             * Adds a mutation observer to react to changes to count of `urth-viz-col` child
-             * elements.
-             */
-            attached: function() {
-                this._contentObserver = Polymer.dom(this.$.content).observeNodes(this._updateColumns.bind(this));
-            },
-
-            /**
-             * Remove mutation observer
-             */
-            detached: function() {
-                Polymer.dom(this.$.content).unobserveNodes(this._contentObserver);
-
-                if (this.hot) {
-                    this.hot.destroy();
-                    this.hot = null;
-                }
             }
         });
     })();
