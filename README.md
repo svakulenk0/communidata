@@ -3,6 +3,7 @@ Public repository of the research project CommuniData: Open Data for Local Commu
 
 ## Open Data in Austria
 
+### Wordclouds
 * titles from all 2297 datasets in data_gv_at portal, 373 datasets in www_opendataportal_at portal (latest snapshot: 1st week of 2017 '1701')
 * Exception from the API: {u'message': u'QueuePool limit of size 20 overflow 10 reached, connection timed out, timeout 30'} after ~150 requests (data_gv_at: 1643 snapshot)
 
@@ -11,6 +12,11 @@ Public repository of the research project CommuniData: Open Data for Local Commu
 
 #### opendataportal.at Wordcloud (373 datasets as of 31.12.2016)
 ![opendataportal.at wordcloud](results/www_opendataportal_at_1701.png)
+
+### Jupyter Notebook Tutorials
+
+The tutorials are published on [our web-site](http://www.communidata.at)
+<!-- or [![Binder](http://mybinder.org/badge.svg)](http://mybinder.org:/repo/vendi12/communidata) -->
 
 
 ## Search
@@ -22,6 +28,13 @@ For example, the following queries return the rows associated with the 2nd distr
 			 grep ";1020;" *
 			 grep ";90200;" *
 			 grep -i ";Leopoldstadt;" *
+
+
+## StuwerNews
+
+Tracking news for the local communities from social media (Twitter)
+
+See https://github.com/vendi12/StuwerNews
 
 ## Prerequisites
 ### Wordcloud
