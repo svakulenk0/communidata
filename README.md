@@ -29,6 +29,15 @@ For example, the following queries return the rows associated with the 2nd distr
 			 grep ";90200;" *
 			 grep -i ";Leopoldstadt;" *
 
+### ES search API sample results
+
+Request: "Musik im Park"
+
+Results: 
+Garagen und Park & Ride-Anlagen - Standorte - Wien
+Park- und Ride Anlagen K\xe4rnten
+Musik- und Singschulen - Standorte - Wien
+
 
 ## StuwerNews
 
