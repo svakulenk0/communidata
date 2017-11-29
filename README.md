@@ -39,6 +39,16 @@ Park- und Ride Anlagen K\xe4rnten
 Musik- und Singschulen - Standorte - Wien
 
 
+## Schemas
+
+Sample datasets revealing the schemas for each of the Austrian OD portals are stored in the folder schemas and can be dynamically retrieved from the Portalwatch API:
+
+* (http://data.wu.ac.at/portalwatch/api/v1/portal/data_gv_at/1643/dataset/fefb5d94-9d23-4799-ba2a-d314f36833cb)
+
+* (http://data.wu.ac.at/portalwatch/api/v1/portal/www_opendataportal_at/1643/dataset/c4feea62-92d8-4855-a2b5-98338a0ffe41)
+
+
+
 ## StuwerNews
 
 Tracking news for the local communities from social media (Twitter)
