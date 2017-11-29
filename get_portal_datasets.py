@@ -26,6 +26,8 @@ def get_descriptions_of_all_portal_datasets(portal_id, snapshot=LATEST_SNAPSHOT)
     '''
     # Get the list of all portal datasets 
     # e.g. http://data.wu.ac.at/portalwatch/api/v1/portal/www_opendataportal_at/1643/datasets
+    # or http://data.wu.ac.at/portalwatch/api/v1/portal/data_gv_at/1643/datasets
+
     datasets_dump = 'datasets/'+portal_id+'_'+snapshot+'.json'
     try:
         with open(datasets_dump, 'r') as infile:
@@ -38,6 +40,8 @@ def get_descriptions_of_all_portal_datasets(portal_id, snapshot=LATEST_SNAPSHOT)
             pickle.dump(datasets, outfile)
     # Using "id", get the metadata for a dataset
     # e.g. http://data.wu.ac.at/portalwatch/api/v1/portal/www_opendataportal_at/1643/dataset/c4feea62-92d8-4855-a2b5-98338a0ffe41
+    # or http://data.wu.ac.at/portalwatch/api/v1/portal/data_gv_at/1643/dataset/fefb5d94-9d23-4799-ba2a-d314f36833cb
+
     descriptions = []
     descriptions_dump = 'datasets/%s_%s_titles.txt' % (portal_id, snapshot)
     with open(descriptions_dump, 'w') as outfile:
@@ -73,6 +77,16 @@ def get_descriptions_of_all_portal_datasets(portal_id, snapshot=LATEST_SNAPSHOT)
 #     print descriptions
 #     with open(descriptions_dump, 'w') as outfile:
 #         outfile.writelines("%s\n" % l for l in descriptions)
+
+
+def get_sample_portal_dataset():
+    '''
+    e.g. to check the portal specific datasets schema
+    '''
+    pass
+
+def test_get_sample_portal_dataset():
+    get_sample_portal_dataset()
 
 
 def test_get_descriptions_of_all_portal_datasets():
