@@ -1,0 +1,199 @@
+[
+  {
+    "created": "Tue, 25 Oct 2016 01:00:56 GMT", 
+    "license": "CC-BY-4.0", 
+    "md5": "60b9417043a3b9c794b1d3ee4abac517", 
+    "modified": "Sun, 05 Jul 2015 13:41:52 GMT", 
+    "organisation": "mumok | museum moderner kunst stiftung ludwig wien", 
+    "raw": {
+      "author": null, 
+      "author_email": null, 
+      "creator_user_id": "e2ae89b1-4f53-4913-9dbe-03c251f614ba", 
+      "extras": [
+        {
+          "key": "begin_datetime", 
+          "value": "2015-07-05T00:00:00"
+        }, 
+        {
+          "key": "categorization", 
+          "value": "{bildung-und-forschung,kunst-und-kultur}"
+        }, 
+        {
+          "key": "end_datetime", 
+          "value": "2015-07-06T00:00:00"
+        }, 
+        {
+          "key": "maintainer_link", 
+          "value": "http://www.mumok.at"
+        }, 
+        {
+          "key": "metadata_identifier", 
+          "value": "c4feea62-92d8-4855-a2b5-98338a0ffe41"
+        }, 
+        {
+          "key": "metadata_linkage", 
+          "value": ""
+        }, 
+        {
+          "key": "metadata_original_portal", 
+          "value": ""
+        }, 
+        {
+          "key": "publisher", 
+          "value": "mumok | museum moderner kunst stiftung ludwig wien"
+        }, 
+        {
+          "key": "schema_characterset", 
+          "value": "utf8"
+        }, 
+        {
+          "key": "schema_language", 
+          "value": "ger"
+        }, 
+        {
+          "key": "schema_name", 
+          "value": "OGD Austria Metadata 2.2"
+        }, 
+        {
+          "key": "update_frequency", 
+          "value": "daily"
+        }
+      ], 
+      "groups": [], 
+      "id": "c4feea62-92d8-4855-a2b5-98338a0ffe41", 
+      "isopen": true, 
+      "license_id": "cc-by", 
+      "license_title": "Creative Commons Namensnennung 3.0 \u00d6sterreich", 
+      "license_url": "https://creativecommons.org/licenses/by/3.0/at/deed.de", 
+      "maintainer": "Museum Moderner Kunst Stiftung Ludwig Wien - Abteilung IT", 
+      "maintainer_email": "", 
+      "metadata_created": "2015-07-05T13:41:52.742561", 
+      "metadata_modified": "2016-10-25T01:00:56.688269", 
+      "name": "mapping-zwischen-kunstwerk-und-kunstler-der-sammlung-des-mumok", 
+      "notes": "Mapping zwischen Kunstwerk und K\u00fcnstler zu Kunstwerken der Sammlung des Museum Moderner Kunst Stiftung Ludwig Wien (kurz \"mumok\"). Beinhaltet nur Daten zu bereits aufbereiteten Kunstwerken, die sich auch in der Online-Sammlung des mumok befinden.", 
+      "num_resources": 2, 
+      "num_tags": 4, 
+      "organization": {
+        "approval_status": "approved", 
+        "created": "2015-06-20T20:22:41.722871", 
+        "description": "Das mumok ist das gr\u00f6\u00dfte Museum im Zentrum Europas f\u00fcr die Kunst seit der Moderne. Es macht die internationale und \u00f6sterreichische Avantgarde in ihren unterschiedlichen Facetten f\u00fcr alle Kunstinteressierten zug\u00e4nglich.", 
+        "id": "eb78d164-155b-46db-bc5b-9d20f06673bd", 
+        "image_url": "20150620-182241.651309mumok-logo.png", 
+        "is_organization": true, 
+        "name": "mumok-museum-moderner-kunst-stiftung-ludwig-wien", 
+        "revision_id": "4e07257d-cea8-4076-b1e2-df3976993dae", 
+        "revision_timestamp": "2015-07-05T13:48:27.791640", 
+        "state": "active", 
+        "title": "mumok | museum moderner kunst stiftung ludwig wien", 
+        "type": "organization"
+      }, 
+      "owner_org": "eb78d164-155b-46db-bc5b-9d20f06673bd", 
+      "private": false, 
+      "relationships_as_object": [], 
+      "relationships_as_subject": [], 
+      "resources": [
+        {
+          "cache_last_updated": null, 
+          "cache_url": null, 
+          "created": "2015-07-05T00:00:00", 
+          "description": "", 
+          "format": "CSV", 
+          "hash": "", 
+          "id": "86257835-66ec-4f5c-a9cc-8721faf57dc6", 
+          "last_modified": "2016-10-25T03:00:17.549645", 
+          "mimetype": null, 
+          "mimetype_inner": null, 
+          "name": "Verkn\u00fcpfung Kunstwerke zu K\u00fcnstlern der Sammlung mumok", 
+          "position": 0, 
+          "resource_group_id": "935075c5-231c-4067-b76b-7b1f3bd12c29", 
+          "resource_type": null, 
+          "revision_id": "83f92019-2e57-4c78-8ce6-4275f23b73df", 
+          "revision_timestamp": "2016-10-25T01:00:53.042354", 
+          "size": "83889", 
+          "state": "active", 
+          "tracking_summary": {
+            "recent": 0, 
+            "total": 0
+          }, 
+          "url": "http://data.mumok.at/obj_artist.csv", 
+          "url_type": null, 
+          "webstore_last_updated": null, 
+          "webstore_url": null
+        }, 
+        {
+          "cache_last_updated": null, 
+          "cache_url": null, 
+          "created": "2015-07-05T00:00:00", 
+          "description": "", 
+          "format": "JSON", 
+          "hash": "", 
+          "id": "ae5044fa-2a39-405f-bcce-b2d3709a62c5", 
+          "last_modified": "2016-10-25T03:00:17.549645", 
+          "mimetype": null, 
+          "mimetype_inner": null, 
+          "name": "Metadaten zu Verkn\u00fcpfung Kunstwerke zu K\u00fcnstlern der Sammlung mumok", 
+          "position": 1, 
+          "resource_group_id": "935075c5-231c-4067-b76b-7b1f3bd12c29", 
+          "resource_type": null, 
+          "revision_id": "09e59409-55cd-4c42-b4ec-5165f4296049", 
+          "revision_timestamp": "2016-10-25T01:00:56.687663", 
+          "size": "1929", 
+          "state": "active", 
+          "tracking_summary": {
+            "recent": 0, 
+            "total": 0
+          }, 
+          "url": "http://data.mumok.at/obj_artist.csv-metadata.json", 
+          "url_type": null, 
+          "webstore_last_updated": null, 
+          "webstore_url": null
+        }
+      ], 
+      "revision_id": "f5ed0158-a79d-4a21-b03a-ef52f3d1d31e", 
+      "revision_timestamp": "2015-07-05T13:44:11.076469", 
+      "state": "active", 
+      "tags": [
+        {
+          "display_name": "Kultur", 
+          "id": "9185def1-0f64-4d9c-8ff9-c7f326004037", 
+          "name": "Kultur", 
+          "revision_timestamp": "2015-07-05T13:41:52.742561", 
+          "state": "active", 
+          "vocabulary_id": null
+        }, 
+        {
+          "display_name": "Museum", 
+          "id": "44255fe6-0bf5-4b5c-a09c-a24b47a4f7d9", 
+          "name": "Museum", 
+          "revision_timestamp": "2015-07-05T13:41:52.742561", 
+          "state": "active", 
+          "vocabulary_id": null
+        }, 
+        {
+          "display_name": "kunst", 
+          "id": "4230b586-3c0e-4b4b-a9e4-ef6751d0518d", 
+          "name": "kunst", 
+          "revision_timestamp": "2015-07-05T13:41:52.742561", 
+          "state": "active", 
+          "vocabulary_id": null
+        }, 
+        {
+          "display_name": "mumok", 
+          "id": "d23de832-613f-4870-aeb2-6f851659a27b", 
+          "name": "mumok", 
+          "revision_timestamp": "2015-07-05T13:41:52.742561", 
+          "state": "active", 
+          "vocabulary_id": null
+        }
+      ], 
+      "title": "Mapping zwischen Kunstwerk und K\u00fcnstler der Sammlung des mumok", 
+      "tracking_summary": {
+        "recent": 0, 
+        "total": 0
+      }, 
+      "type": "dataset", 
+      "url": null, 
+      "version": null
+    }
+  }
+]
